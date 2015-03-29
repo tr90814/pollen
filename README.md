@@ -1,3 +1,3 @@
 ### Pollenate eveyone
 
-#pollen-seed.herokuapp.com
+See it at: [pollen-seed.herokuapp.com](http://pollen-seed.herokuapp.com)
