@@ -3,10 +3,11 @@ Meteor.methods
   # Create a room by adding it to the Rooms collection
   # The callback parameter is automatically handled by Meteor.
   # See client/templates/roomList.coffee for an example call.
-  createRoom : (roomName, callback) ->
+  createRoom : (roomName, seeder, callback) ->
     if not roomName then return
     # Insert the new room into the Rooms collection
     Rooms.insert
+      seeder : seeder
       name : roomName
       user_count : 0
       creation_date : new Date()

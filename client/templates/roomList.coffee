@@ -15,6 +15,6 @@ Template.roomList.events
 
     # Call the Meteor.method function on the server to handle putting it into the rooms collection.
     # Also, setup a callback that will navigate to the room when the server is done.
-    Meteor.call "createRoom", roomName, (error, result) ->
+    Meteor.call "createRoom", roomName, Meteor.user().username, (error, result) ->
       if error then return
       Router.go "/room/#{result}"

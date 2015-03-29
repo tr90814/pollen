@@ -10,10 +10,11 @@ template(name="room")
         span(class='label label-default #{state}') #{data.username}
 
     //- Create message form
-    form.input-group(data-action="search")
-      input.form-control(data-value="search" placeholder="Search")
-      span.input-group-btn
-        input.btn.btn-default(type="submit" value="Send")
+    if isSeeder
+      form.input-group(data-action="search")
+        input.form-control(data-value="search" placeholder="Search")
+        span.input-group-btn
+          input.btn.btn-default(type="submit" value="Send")
 
     #player.well
       each message
@@ -22,7 +23,8 @@ template(name="room")
           .user #{user}
           .artwork
             img(src="#{artwork_url}")
-        input.btn.skip(placeholder="Skip")
+        if isSeeder
+          input.btn.skip(placeholder="Skip")
       if queued.count
         #queue
           ul
@@ -34,12 +36,13 @@ template(name="room")
                   img(src="#{artwork_url}")
 
     //- Display messages. This will update automatically because of reactive collection data.
-    #messages-container.well
-      if results.count
-        if results
-          each results
-            .message
-              label.username #{user}:
-              span.content #{title}
-      else
-        .message No search results
+    if isSeeder
+      #messages-container.well
+        if results.count
+          if results
+            each results
+              .message
+                label.username #{user}:
+                span.content #{title}
+        else
+          .message No search results

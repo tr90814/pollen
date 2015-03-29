@@ -1,5 +1,7 @@
 # Template helpers
 Template.room.helpers
+  isSeeder : ->
+    return Meteor.user().username == Rooms.findOne({_id: Session.get('roomId')}).seeder
   # Find the room name from the Rooms collection by room id.
   roomName : ->
     room = Rooms.findOne Session.get "roomId"
