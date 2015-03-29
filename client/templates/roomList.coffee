@@ -3,6 +3,8 @@ Template.roomList.helpers
   # Find rooms and sort by create date.
   rooms : -> Rooms.find {}, sort : creation_date : 'desc'
 
+  currentTrack : -> this.current_track
+
 # Template events
 Template.roomList.events
   # Create a room on form submit.

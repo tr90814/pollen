@@ -4,6 +4,7 @@ Meteor.methods
     Rooms.insert
       seeder : seeder
       name : roomName
+      current_track: undefined
       user_count : 0
       creation_date : new Date()
 
@@ -22,6 +23,10 @@ Meteor.methods
       removeRoom roomId
     else
       Rooms.update roomId, $set: user_count:roomUsersCount
+
+  setRoomTrack : (obj) ->
+    if not checkIsValidRoom obj.roomId then return
+    Rooms.update obj.roomId, $set: current_track: obj.title
 
   createMessage : (params={}) ->
     Messages.insert

@@ -21,9 +21,7 @@ Template.room.helpers
           preferFlash: false
           autoPlay: true
           onfinish: -> nextTrack()
-          onplay: () ->
-            Session.set "currentSound", this
-            Session.set "currentSoundId", track.trackId
+          onplay: -> setNewTrack(track, this)
           # onload: () ->
           #   if ((this.readyState == 2) && (u.activeState == 'streaming'))
           #     Session.set "currentSound", this
@@ -73,3 +71,8 @@ stopTrack = () ->
     soundManager.stop(Session.get('currentSound').sID)
     Session.set "currentSound", undefined
     Session.set "currentSoundId", undefined
+
+setNewTrack = (track, obj) ->
+  Session.set "currentSound", obj
+  Session.set "currentSoundId", track.trackId
+  Meteor.call "setRoomTrack", {title: track.title, roomId: Session.get('roomId')}

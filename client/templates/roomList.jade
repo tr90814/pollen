@@ -15,6 +15,7 @@ template(name="roomList")
     .list-group
       each rooms
         a.list-group-item(href="/room/#{_id}" title=name data-id=_id) #{name}
+          span.current-track - current track - #{currentTrack}
           .badge #{user_count} users
   else
     span No rooms available
