@@ -1,25 +1,21 @@
-# Template helpers
 Template.room.helpers
   isSeeder : ->
     return Meteor.user().username == Rooms.findOne({_id: Session.get('roomId')}).seeder
-  # Find the room name from the Rooms collection by room id.
+
   roomName : ->
     room = Rooms.findOne Session.get "roomId"
     room ?= name : "Current Room"
     room.name
-  # Retrieve the users sorted by username.
-  # The UserPresences collection will only contain relevant room users since the server publishes by roomId.
+
   roomUsers : ->
     UserPresences.find {}, sort : "data.username":1
-  # Find the messages in the room by room id.
-  # Like UserPresences, the Messages collection subscribed to only contains messages associated with the current roomId.
+
   message : ->
     track = Messages.find({}).fetch()[0]
     if track
       if ((!Session.get('currentSound')) || (Session.get('currentSoundId') != track.trackId))
         if Session.get('currentSound')
           stopTrack()
-        console.log track
         SC.stream "/tracks/" + track.trackId,
           useHTML5Audio: true
           preferFlash: false
@@ -44,15 +40,12 @@ Template.room.helpers
       if (Results.find().fetch()[0].username == Meteor.user().username)
         Results.find {}
 
-# Template events
 Template.room.events =
-  # Create a message on form submit.
-  # Note: It is recommended to use 'submit' instead of 'click' since it will handle all submit cases.
   "submit [data-action=search]" : (event, template) ->
     event.preventDefault()
     $query = $("[data-value=search]")
     if $query.val() is "" then return
-    # Call the Meteor.method function on the server to handle putting it into the messages collection.
+
     SC.get '/tracks', { q: $query.val() }, (tracks) ->
       if (typeof(tracks) == 'object')
         Meteor.call "removeOldResults"
@@ -60,7 +53,7 @@ Template.room.events =
           Meteor.call "createResult",
             roomId : Session.get "roomId"
             track: track
-    # Clear the form
+
     $query.val ""
 
   "click .message" : () ->
