@@ -1,3 +1,1 @@
 ### Pollenate eveyone
-
-# Meteor app
