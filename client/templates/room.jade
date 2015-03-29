@@ -9,13 +9,6 @@ template(name="room")
         //- Setting the state string in the classes will indicate, via css, if a user is online or idle!
         span(class='label label-default #{state}') #{data.username}
 
-    //- Create message form
-    if isSeeder
-      form.input-group(data-action="search")
-        input.form-control(data-value="search" placeholder="Search")
-        span.input-group-btn
-          input.btn.btn-default(type="submit" value="Send")
-
     #player.well
       each message
         .track-info
@@ -35,8 +28,12 @@ template(name="room")
                 .artwork
                   img(src="#{artwork_url}")
 
-    //- Display messages. This will update automatically because of reactive collection data.
     if isSeeder
+      form.input-group(data-action="search")
+        input.form-control(data-value="search" placeholder="Search for tracks")
+        span.input-group-btn
+          input.btn.btn-default(type="submit" value="Search")
+
       #messages-container.well
         if results.count
           if results
