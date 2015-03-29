@@ -1,0 +1,20 @@
+template(name="roomList")
+
+  h3 Create a room
+
+  //- Create room form
+  form.input-group(data-action="create-room")
+    input.form-control(data-value="create-room" type="text" placeholder="New room name")
+    span.input-group-btn
+      input.btn.btn-default(type="submit" value="Create")
+
+  h3 Rooms
+
+  //- Display rooms. Reactive data will update the available rooms live.
+  if rooms.count
+    .list-group
+      each rooms
+        a.list-group-item(href="/room/#{_id}" title=name data-id=_id) #{name}
+          .badge #{user_count} users
+  else
+    span No rooms available

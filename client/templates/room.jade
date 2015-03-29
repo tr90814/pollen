@@ -1,0 +1,45 @@
+template(name="room")
+
+    h3 #{roomName}
+
+    label Who's in this room:
+    #users
+      //- Display users in the current room. Since all data is reactive, this will update live.
+      each roomUsers
+        //- Setting the state string in the classes will indicate, via css, if a user is online or idle!
+        span(class='label label-default #{state}') #{data.username}
+
+    //- Create message form
+    form.input-group(data-action="search")
+      input.form-control(data-value="search" placeholder="Search")
+      span.input-group-btn
+        input.btn.btn-default(type="submit" value="Send")
+
+    #player.well
+      each message
+        .track-info
+          .title #{title}
+          .user #{user}
+          .artwork
+            img(src="#{artwork_url}")
+        input.btn.skip(placeholder="Skip")
+      if queued.count
+        #queue
+          ul
+            each queued
+              li
+                .title #{title}
+                .user #{user}
+                .artwork
+                  img(src="#{artwork_url}")
+
+    //- Display messages. This will update automatically because of reactive collection data.
+    #messages-container.well
+      if results.count
+        if results
+          each results
+            .message
+              label.username #{user}:
+              span.content #{title}
+      else
+        .message No search results
