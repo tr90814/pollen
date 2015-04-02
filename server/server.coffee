@@ -24,9 +24,8 @@ Meteor.methods
     else
       Rooms.update roomId, $set: user_count:roomUsersCount
 
-  setRoomTrack : (obj) ->
-    if not checkIsValidRoom obj.roomId then return
-    Rooms.update obj.roomId, $set: current_track: obj.title
+  setRoomTrack : (title) ->
+    Rooms.update({userId: Meteor.userId()}, {$set: {current_track: title}})
 
   createMessage : (params={}) ->
     return unless params

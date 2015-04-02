@@ -4,8 +4,6 @@ Template.layout.helpers
   # This is used to see if a "Leave Room" link should be displayed.
   hasRoomId : -> if Meteor.userId() and Session.get("roomId") then true else false
 
-  currentTrack : -> this.current_track
-
   paused : -> Session.get('currentSound').paused
 
   message : ->
@@ -62,5 +60,5 @@ stopTrack = () ->
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
-  Meteor.call "setRoomTrack", {title: track.title, roomId: Session.get('roomId')}
+  Meteor.call "setRoomTrack", track.title
 
