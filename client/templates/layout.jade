@@ -10,3 +10,23 @@ template(name="layout")
     .container
       //- Show the sub-template
       +yield
+
+  #player-sticky
+    each message
+      .track-info
+        span.artwork
+          img(src="#{artwork_url}")
+        span.title #{title}
+        span.user #{user.username}
+      input.btn.btn-default.skip(placeholder="Skip >>")
+      input.btn.btn-default.pause(placeholder="Pause ||")
+      input.btn.btn-default.play(placeholder="Play >")
+    #queue
+      ul
+        each queued
+          li
+            span.artwork
+              img(src="#{artwork_url}")
+            span.title #{title}
+            span.user #{user.username}
+

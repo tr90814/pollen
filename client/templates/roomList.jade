@@ -1,21 +1,31 @@
 template(name="roomList")
 
-  h3 Create a room
-
-  //- Create room form
-  form.input-group(data-action="create-room")
-    input.form-control(data-value="create-room" type="text" placeholder="New room name")
-    span.input-group-btn
-      input.btn.btn-default(type="submit" value="Create")
-
-  h3 Rooms
+  h3 Seeders to listen to
 
   //- Display rooms. Reactive data will update the available rooms live.
   if rooms.count
     .list-group
       each rooms
-        a.list-group-item(href="/room/#{_id}" title=name data-id=_id) #{name}
-          span.current-track - current track - #{currentTrack}
+        a.list-group-item(href="/room/#{_id}" title=name data-id=_id) #{username}
+          if currentTrack
+            span.current-track - current track - #{currentTrack}
+          else
+            span.current-track - No track
           .badge #{user_count} users
   else
     span No rooms available
+
+  form.input-group(data-action="search")
+    input.form-control(data-value="search" placeholder="Search for tracks")
+    span.input-group-btn
+      input.btn.btn-default(type="submit" value="Search")
+
+  #messages-container.well
+    if results.count
+      if results
+        each results
+          .message
+            label.username #{user.username}:
+            span.content #{title}
+    else
+      .message No search results

@@ -1,6 +1,6 @@
 template(name="room")
 
-    h3 #{roomName}
+    h3 #{roomName}'s tracks
 
     label Who's in this room:
     #users
@@ -10,36 +10,14 @@ template(name="room")
         span(class='label label-default #{state}') #{data.username}
 
     #player.well
-      each message
-        .track-info
-          .title #{title}
-          .user #{user}
-          .artwork
-            img(src="#{artwork_url}")
-        if isSeeder
-          input.btn.skip(placeholder="Skip >>")
       if queued.count
         #queue
           ul
             each queued
               li
-                .title #{title}
-                .user #{user}
-                .artwork
+                span.artwork
                   img(src="#{artwork_url}")
+                span.title #{title}
+                span.user #{user.username}
 
-    if isSeeder
-      form.input-group(data-action="search")
-        input.form-control(data-value="search" placeholder="Search for tracks")
-        span.input-group-btn
-          input.btn.btn-default(type="submit" value="Search")
 
-      #messages-container.well
-        if results.count
-          if results
-            each results
-              .message
-                label.username #{user}:
-                span.content #{title}
-        else
-          .message No search results

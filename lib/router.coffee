@@ -2,7 +2,9 @@
 Router.configure
   layoutTemplate: "layout"
   notFoundTemplate: "home"
-  waitOn: -> Meteor.subscribe "allRooms"
+  waitOn: ->
+    Meteor.subscribe "allRooms"
+    Meteor.subscribe "roomMessages", Meteor.userId()
 
 # Define page routes.
 Router.map ->
@@ -12,9 +14,12 @@ Router.map ->
 
     @.route "/rooms",
       template : "roomList"
+      waitOn : ->
+        Meteor.subscribe "searchResults", Meteor.username
       # Set the session roomId to null when navigating to a non room page.
       action : ->
         Session.set "roomId", null
+        Session.set "roomUserId", null
         @.render()
 
     @.route "/room/:_id",
@@ -23,14 +28,19 @@ Router.map ->
       # See, server/publications.coffee for publication setup.
       waitOn : ->
         Meteor.subscribe "roomUsers", @.params._id
-        Meteor.subscribe "roomMessages", @.params._id
-        Meteor.subscribe "searchResults"
+        if Session.get "roomId"
+          Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).userId
+          console.log(Rooms.find().fetch())
+          console.log(Session.get "roomId")
       # When navigating to a room we want to call joinRoom so the server can handle it.
       # Then, we set the session roomId. This will reactivley update user presence data.
       action : ->
           Session.set "userName", Meteor.user().username
           Meteor.call "joinRoom", @.params._id
           Session.set "roomId", @.params._id
+          Session.set "roomUserId", Rooms.findOne(@.params._id).userId
+          Meteor.call "createRoom", @.params._id, Meteor.user().username
+
           @.render()
       # Remove user from the list of users on unload
       unload : ->

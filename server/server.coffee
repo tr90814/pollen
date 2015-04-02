@@ -1,9 +1,9 @@
 Meteor.methods
-  createRoom : (roomName, seeder, callback) ->
-    if not roomName then return
+  createRoom : (callback) ->
+    if Rooms.findOne({userId: Meteor.userId()}) then return
     Rooms.insert
-      seeder : seeder
-      name : roomName
+      userId : Meteor.userId()
+      username : Meteor.user().username
       current_track: undefined
       user_count : 0
       creation_date : new Date()
@@ -29,37 +29,39 @@ Meteor.methods
     Rooms.update obj.roomId, $set: current_track: obj.title
 
   createMessage : (params={}) ->
+    return unless params
     Messages.insert
       username : Meteor.user().username
-      roomId : params.roomId
+      userId : Meteor.userId()
       creation_date : new Date()
       trackId : params.track.trackId
       artwork_url: params.track.artwork_url
       description: params.track.description
       genre: params.track.genre
       title: params.track.title
-      user: params.track.user.username
+      user: params.track.user
       duration: params.track.duration
 
   createResult : (params={}) ->
+    return unless params
     Results.insert
       username : Meteor.user().username
-      roomId : params.roomId
+      userId: Meteor.userId()
       creation_date : new Date()
       trackId : params.track.id
       artwork_url: params.track.artwork_url
       description: params.track.description
       genre: params.track.genre
       title: params.track.title
-      user: params.track.user.username
+      user: params.track.user
       duration: params.track.duration
 
-  removeOldResults: ->
-    Results.remove {}
+  removeOldResults: (userId) ->
+    Results.remove {userId: userId}
 
   removeOldestTrack: ->
-    if Messages.find().count()
-      _id = Messages.find({}).fetch()[0]._id
+    if Messages.find({userId: Meteor.userId()}).count()
+      _id = Messages.find({userId: Meteor.userId()}).fetch()[0]._id
       Messages.remove({_id: _id})
 
 # Setup an onDisconnect handler on UserPresenceSettings (from dpid:user-presence package).

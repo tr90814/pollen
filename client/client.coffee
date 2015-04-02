@@ -5,6 +5,7 @@ Accounts.ui.config passwordSignupFields: "USERNAME_ONLY"
 # If so, then navigate to the room list page.
 Tracker.autorun ->
   if Meteor.userId()
+    Meteor.call 'createRoom'
     if Router.current() and Router.current().route._path is "/"
       Router.go "rooms"
 

@@ -22,6 +22,22 @@
     margin-top: 10px
     width: 100px
 
+#player-sticky
+  border-top: 2px solid #333
+  position: fixed
+  bottom: 0
+  width: 100%
+  min-height: 30px
+  background-color: #eee
+  padding: 20px
+  .track-info
+    width: 50%
+    display: inline
+    float: left
+  button
+    display: inline
+    float: left
+
 #queue
   margin-top: 10px
   width: 100%
@@ -30,15 +46,23 @@
   border-radius: 5px;
   padding: 10px
   ul
-    width: 2000px
+    width: 3100px
     margin: 0
     padding: 0
   li
     display: inline
-    width: 190px
+    width: 300px
     margin: 0 5px
     border: 1px solid lightgrey
     padding: 5px
     float: left
-    .title
-      height: 65px
+    overflow: hidden
+    height: 100px
+  span
+    float: left
+  .title
+    width: 200px
+    overflow: hidden
+  .user
+    width: 200px
+    overflow: hidden

@@ -3,20 +3,27 @@ Template.roomList.helpers
   # Find rooms and sort by create date.
   rooms : -> Rooms.find {}, sort : creation_date : 'desc'
 
-  currentTrack : -> this.current_track
+  results: ->
+    if Results.find({userId: Meteor.userId()}).count()
+      Results.find {userId: Meteor.userId()}
 
 # Template events
 Template.roomList.events
-  # Create a room on form submit.
-  # Note: It is recommended to use 'submit' instead of 'click' since it will handle all submit cases.
-  'submit [data-action=create-room]' : (event, template) ->
+  "submit [data-action=search]" : (event, template) ->
     event.preventDefault()
+    $query = $("[data-value=search]")
+    if $query.val() is "" then return
 
-    roomName = $('[data-value=create-room]').val()
-    if not roomName then return
+    SC.get '/tracks', { q: $query.val() }, (tracks) ->
+      if (typeof(tracks) == 'object')
+        Meteor.call "removeOldResults", Meteor.userId()
+        for track in tracks
+          Meteor.call "createResult",
+            roomId : Session.get "roomId"
+            track : track
 
-    # Call the Meteor.method function on the server to handle putting it into the rooms collection.
-    # Also, setup a callback that will navigate to the room when the server is done.
-    Meteor.call "createRoom", roomName, Meteor.user().username, (error, result) ->
-      if error then return
-      Router.go "/room/#{result}"
+    $query.val ""
+
+  "click .message" : () ->
+    Meteor.call "createMessage",
+      track: this
