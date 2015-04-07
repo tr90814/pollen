@@ -7,7 +7,9 @@ Template.layout.helpers
   paused : -> Session.get('currentSound').paused
 
   message : ->
-    track = Messages.find({userId: Meteor.userId()}).fetch()[0]
+    if Session.get "seed" then seed = Session.get "seed" else seed = Meteor.userId()
+    track = Messages.find({userId: seed}).fetch()[0]
+    debugger
     if track
       if ((!Session.get('currentSound')) || (Session.get('currentSoundId') != track.trackId))
         if Session.get('currentSound')

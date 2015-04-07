@@ -19,5 +19,9 @@ template(name="room")
                   img(src="#{artwork_url}")
                 span.title #{title}
                 span.user #{user.username}
+      if switchState
+        input.btn.btn-default.switch-on(value="Listen to user")
+      else
+        input.btn.btn-default.switch-off(value="Go back to own queue")
 
 
