@@ -9,7 +9,6 @@ Template.layout.helpers
   message : ->
     if Session.get "seed" then seed = Session.get "seed" else seed = Meteor.userId()
     track = Messages.find({userId: seed}).fetch()[0]
-    debugger
     if track
       if ((!Session.get('currentSound')) || (Session.get('currentSoundId') != track.trackId))
         if Session.get('currentSound')
@@ -29,7 +28,7 @@ Template.layout.helpers
       return false
 
   queued: ->
-    Messages.find({userId: Meteor.userId()}, {limit: 10})
+    Messages.find({userId: Session.get("seed")}, {limit: 10})
 
 
 Template.layout.events =
