@@ -24,7 +24,7 @@ template(name="layout")
     #queue
       ul
         each queued
-          li
+          li(draggable="true")
             span.artwork
               img(src="#{artwork_url}")
             span.title #{title}

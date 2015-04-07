@@ -31,14 +31,21 @@ Template.layout.helpers
 
 
 Template.layout.events =
-  "click .skip" : () ->
-    nextTrack()
+  "click .skip" : () -> nextTrack()
 
-  "click .pause" : () ->
-    togglePause(false)
+  "click .pause" : () -> togglePause(false)
 
-  "click .play" : () ->
-    togglePause(true)
+  "click .play" : () -> togglePause(true)
+
+  "dragstart li" : (e) -> dragStart(e)
+
+  "dragenter li" : (e) -> dragEnter(e)
+
+  "dragleave li" : (e) -> dragLeave(e)
+
+  "drop li" : (e) -> drop(e)
+
+  "dragover li" : (e) -> dragOver(e)
 
 togglePause = (bool) ->
   currentSound = Session.get('currentSound')
@@ -61,4 +68,31 @@ setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
   Meteor.call "setRoomTrack", track.title
+
+dragStart = (e) ->
+  $(e.target).addClass('dragged')
+
+dragEnter = (e) ->
+  e.preventDefault()
+  $(e.target).addClass('dragged-over')
+
+dragOver = (e) ->
+  e.preventDefault()
+  $(e.target).addClass('dragged-over')
+
+dragLeave = (e) ->
+  e.preventDefault()
+  $(e.target).removeClass('dragged-over')
+
+drop = (e) ->
+  player = $('#player')
+  player.find('li').removeClass('dragged-over')
+  draggedFrom       = player.find('.dragged')
+  draggedFromImg    = draggedFrom.find('img').clone()
+  draggedToImg      = $(e.target).find('img')
+  draggedFrom.html(draggedToImg)
+  $(e.target).html(draggedFromImg)
+  player.find('.dragged').removeClass('dragged')
+  e.preventDefault()
+
 
