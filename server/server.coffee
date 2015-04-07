@@ -19,10 +19,10 @@ Meteor.methods
 
     roomUsers = UserPresences.find "data.roomId" : roomId
     roomUsersCount = roomUsers.count()-1
-    if roomUsersCount <= 0
-      removeRoom roomId
-    else
-      Rooms.update roomId, $set: user_count:roomUsersCount
+    # if roomUsersCount <= 0
+    #   removeRoom roomId
+    # else
+    Rooms.update roomId, $set: user_count:roomUsersCount
 
   setRoomTrack : (title) ->
     Rooms.update({userId: Meteor.userId()}, {$set: {current_track: title}})
