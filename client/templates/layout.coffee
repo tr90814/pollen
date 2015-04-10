@@ -7,9 +7,14 @@ Template.layout.helpers
   paused : -> Session.get('currentSound').paused
 
   message : ->
-    if Session.get "seed" then seed = Session.get "seed" else seed = Meteor.userId()
-    track = Messages.find({userId: seed}).fetch()[0]
+    if Session.get('seedId')
+      seedId = Session.get('seedId')
+    else
+      seedId = Meteor.userId()
+    track = Messages.find({userId: seedId}).fetch()[0]
     if track
+      # return [track] if Session.get 'loading'
+      Session.set 'loading', true
       if ((!Session.get('currentSound')) || (Session.get('currentSoundId') != track.trackId))
         if Session.get('currentSound')
           stopTrack()
@@ -23,13 +28,17 @@ Template.layout.helpers
           #   if ((this.readyState == 2) && (u.activeState == 'streaming'))
           #     Session.set "currentSound", this
       return [track]
-    else if Session.get("currentSound")
-      nextTrack()
-      return false
+    # else if Session.get("currentSound")
+    #   console.log 'next track'
+    #   nextTrack()
+    #   return false
 
   queued: ->
-    Messages.find({userId: Session.get("seed")}, {limit: 10})
-
+    if Session.get('seedId')
+      seedId = Session.get('seedId')
+    else
+      seedId = Meteor.userId()
+    Messages.find({userId: seedId}, {limit: 10})
 
 Template.layout.events =
   "click .skip" : () ->
@@ -61,4 +70,5 @@ stopTrack = () ->
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
+  Session.set "loading", false
 

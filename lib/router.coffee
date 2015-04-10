@@ -3,10 +3,11 @@ Router.configure
   layoutTemplate: "layout"
   notFoundTemplate: "home"
   waitOn: ->
-    unless Session.get "seed"
-      Session.set "seed", Meteor.userId()
+    if Meteor.userId()
+      unless Session.get "seedId"
+        Session.set "seedId", Meteor.userId()
+      Meteor.subscribe "roomMessages", Session.get("seedId")
     Meteor.subscribe "allRooms"
-    Meteor.subscribe "roomMessages", Session.get("seed")
 
 # Define page routes.
 Router.map ->
