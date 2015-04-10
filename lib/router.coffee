@@ -32,6 +32,7 @@ Router.map ->
         Meteor.subscribe "roomUsers", @.params._id
         if Session.get "roomId"
           Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).userId
+          Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).seedId
           console.log(Rooms.find().fetch())
           console.log(Session.get "roomId")
       # When navigating to a room we want to call joinRoom so the server can handle it.

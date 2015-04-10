@@ -8,7 +8,8 @@ Template.room.helpers
     UserPresences.find {}, sort : "data.username": 1
 
   queued : ->
-    Messages.find({userId: Session.get "roomUserId"}, {limit: 10})
+    seedId = Rooms.findOne(Session.get('roomId')).seedId
+    Messages.find({userId: seedId}, {limit: 10})
 
   switchState : ->
     Rooms.findOne(Session.get('roomId')).userId != Session.get("seed")
@@ -20,7 +21,9 @@ Template.room.events =
       track: this
 
   "click .switch-on" : () ->
-    Session.set("seed", Rooms.findOne(Session.get('roomId')).userId)
+    Meteor.call "addSeed", Rooms.findOne(Session.get('roomId')).userId
+    Session.set("seed", Rooms.findOne(Session.get('roomId')).seedId)
 
   "click .switch-off" : () ->
-    Session.set("seed", Meteor.userId())
+    Meteor.call "addSeed", Meteor.userId()
+    Session.set "seed", Meteor.userId()

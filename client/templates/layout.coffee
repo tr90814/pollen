@@ -61,5 +61,4 @@ stopTrack = () ->
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
-  Meteor.call "setRoomTrack", track.title
 
