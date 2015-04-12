@@ -8,6 +8,10 @@ Meteor.methods
       listener_count : 0
       seedId : Meteor.userId()
       creation_date : new Date()
+      position: 0
+
+  setPosition : (position) ->
+    Rooms.update({userId: Meteor.userId()}, {$set: {position: position}})
 
   joinRoom : (roomId) ->
     if not checkIsValidRoom roomId then return

@@ -6,7 +6,8 @@ Template.roomList.helpers
 
   currentTrack : ->
     seedId = this.seedId || Meteor.userId()
-    track = Messages.find({userId: seedId}).fetch()[0].title
+    if track = Messages.find({userId: seedId}).fetch()[0]
+      track.title
 
   results: ->
     if Results.find({userId: Meteor.userId()}).count()
