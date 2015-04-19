@@ -10,7 +10,7 @@ Template.roomList.helpers
       track.title
 
   listenerCount : ->
-    Rooms.find(userId: this.seedId).count()
+    Rooms.find(userId: this.seedId).count()-1
 
   results: ->
     if Results.find({userId: Meteor.userId()}).count()
