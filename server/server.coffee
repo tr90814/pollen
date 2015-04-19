@@ -43,6 +43,16 @@ Meteor.methods
       user : params.track.user
       duration : params.track.duration
 
+  switchQueueOrder : (params={}) ->
+    from = Messages.findOne({_id: params.fromId})
+    to   = Messages.findOne({_id: params.toId})
+
+    to['_id'] = params.fromId
+    from['_id'] = params.toId
+
+    Messages.update({_id: params.fromId}, to)
+    Messages.update({_id: params.toId}, from)
+
   createResult : (params={}) ->
     return unless params
     Results.insert

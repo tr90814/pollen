@@ -6,6 +6,10 @@ Template.layout.helpers
 
   paused : -> Session.get('currentSound').paused
 
+  ownQueue : -> this.userId == Meteor.userId()
+
+  trackId : -> this._id
+
   message : ->
     if Session.get('seedId')
       seedId = Session.get('seedId')
@@ -42,14 +46,21 @@ Template.layout.helpers
     Messages.find({userId: seedId}, {limit: 10})
 
 Template.layout.events =
-  "click .skip" : () ->
-    nextTrack()
+  "click .skip" : () -> nextTrack()
 
-  "click .pause" : () ->
-    togglePause(false)
+  "click .pause" : () -> togglePause(false)
 
-  "click .play" : () ->
-    togglePause(true)
+  "click .play" : () -> togglePause(true)
+
+  "dragstart li" : (e) -> dragStart(e)
+
+  "dragenter li" : (e) -> dragEnter(e)
+
+  "dragleave li" : (e) -> dragLeave(e)
+
+  "drop li" : (e) -> drop(e)
+
+  "dragover li" : (e) -> dragOver(e)
 
 togglePause = (bool) ->
   currentSound = Session.get('currentSound')
@@ -77,4 +88,38 @@ sendPosition = (sound) ->
 
 setPosition = (sound) ->
   soundManager.setPosition(sound, Rooms.findOne({userId: seedId}).position)
+
+dragStart = (e) ->
+  $(e.target).parents('.item').addClass('dragged')
+
+dragEnter = (e) ->
+  e.preventDefault()
+  $(e.target).parents('.item').addClass('dragged-over')
+
+dragOver = (e) ->
+  e.preventDefault()
+  $(e.target).parents('.item').addClass('dragged-over')
+
+dragLeave = (e) ->
+  e.preventDefault()
+  $(e.target).parents('.item').removeClass('dragged-over')
+
+drop = (e) ->
+  player = $('#player-sticky')
+  player.find('li').removeClass('dragged-over')
+  draggedFrom       = player.find('.dragged')
+  draggedTo         = $(e.target).parents('.item')
+  draggedFromImg    = draggedFrom.children().clone()
+  draggedToImg      = draggedTo.children()
+
+  draggedFrom.html(draggedToImg)
+  draggedTo.html(draggedFromImg)
+  player.find('.dragged').removeClass('dragged')
+  e.preventDefault()
+
+  Meteor.call('switchQueueOrder', {
+    fromId: draggedFrom.attr('data-id'),
+    toId: draggedTo.attr('data-id')
+  })
+
 
