@@ -4,8 +4,6 @@ Meteor.methods
     Rooms.insert
       userId : Meteor.userId()
       username : Meteor.user().username
-      user_count : 0
-      listener_count : 0
       seedId : Meteor.userId()
       creation_date : new Date()
       position: 0
@@ -13,21 +11,21 @@ Meteor.methods
   setPosition : (position) ->
     Rooms.update({userId: Meteor.userId()}, {$set: {position: position}})
 
-  joinRoom : (roomId) ->
-    if not checkIsValidRoom roomId then return
+  # joinRoom : (roomId) ->
+  #   if not checkIsValidRoom roomId then return
 
-    roomUsers = UserPresences.find "data.roomId" : roomId
-    Rooms.update roomId, $set: user_count: roomUsers.count()+1
+  #   roomUsers = UserPresences.find "data.roomId" : roomId
+  #   Rooms.update roomId, $set: user_count: roomUsers.count()+1
 
-  leaveRoom : (roomId) ->
-    if not checkIsValidRoom roomId then return
+  # leaveRoom : (roomId) ->
+  #   if not checkIsValidRoom roomId then return
 
-    roomUsers = UserPresences.find "data.roomId" : roomId
-    roomUsersCount = roomUsers.count()-1
-    # if roomUsersCount <= 0
-    #   removeRoom roomId
-    # else
-    Rooms.update roomId, $set: user_count:roomUsersCount
+  #   roomUsers = UserPresences.find "data.roomId" : roomId
+  #   roomUsersCount = roomUsers.count()-1
+  #   # if roomUsersCount <= 0
+  #   #   removeRoom roomId
+  #   # else
+  #   Rooms.update roomId, $set: user_count:roomUsersCount
 
   createMessage : (params={}) ->
     return unless params
@@ -75,10 +73,8 @@ Meteor.methods
       _id = Messages.find({userId: Meteor.userId()}).fetch()[0]._id
       Messages.remove({_id: _id})
 
-  addSeed : (seedId) ->
-    amount = if seedId then 1 else (-1)
+  changeSeed : (seedId) ->
     Rooms.update({userId: Meteor.userId()}, {$set: {seedId: seedId}})
-    Rooms.update({userId: Meteor.userId()}, {$inc: {listener_count: amount}})
 
 # Setup an onDisconnect handler on UserPresenceSettings (from dpid:user-presence package).
 # Usually we update the user count in a room when the user leaves the room manually.

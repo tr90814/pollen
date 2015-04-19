@@ -9,6 +9,9 @@ Template.roomList.helpers
     if track = Messages.find({userId: seedId}).fetch()[0]
       track.title
 
+  listenerCount : ->
+    Rooms.find(userId: this.seedId).count()
+
   results: ->
     if Results.find({userId: Meteor.userId()}).count()
       Results.find {userId: Meteor.userId()}

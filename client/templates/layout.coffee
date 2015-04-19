@@ -8,6 +8,8 @@ Template.layout.helpers
 
   ownQueue : -> this.userId == Meteor.userId()
 
+  listenersCount : -> Rooms.find({seedId: this.userId}).count()
+
   trackId : -> this._id
 
   message : ->
@@ -33,6 +35,8 @@ Template.layout.helpers
           #   if ((this.readyState == 2) && (u.activeState == 'streaming'))
           #     Session.set "currentSound", this
       return [track]
+    else if Session.get("currentSound")
+      stopTrack()
     # else if Session.get("currentSound")
     #   console.log 'next track'
     #   nextTrack()

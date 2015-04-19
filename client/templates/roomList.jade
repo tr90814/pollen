@@ -11,9 +11,11 @@ template(name="roomList")
             span.current-track - current track - #{currentTrack}
           else
             span.current-track - No track
-          .badge #{user_count} users
+          .badge listeners: #{listenerCount}
   else
     span No rooms available
+
+  h3 Search for your own tracks
 
   form.input-group(data-action="search")
     input.form-control(data-value="search" placeholder="Search for tracks")

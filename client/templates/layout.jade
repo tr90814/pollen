@@ -18,9 +18,11 @@ template(name="layout")
           img(src="#{artwork_url}")
         span.title #{title}
         span.user #{user.username}
-      input.btn.btn-default.skip(placeholder="Skip >>")
-      input.btn.btn-default.pause(placeholder="Pause ||")
-      input.btn.btn-default.play(placeholder="Play >")
+      if ownQueue
+        input.btn.btn-default.skip(placeholder="Skip >>")
+        input.btn.btn-default.pause(placeholder="Pause ||")
+        input.btn.btn-default.play(placeholder="Play >")
+        input.btn.btn-default.count(placeholder="Listeners: #{listenersCount}")
     #queue
       ul
         each queued
