@@ -82,6 +82,7 @@ timeFormat = (milliSeconds) ->
 onPlay = (sound, track) ->
   Meteor.call 'setVirtualTimeStamp', track._id, new Date()
   setNewTrack(track, sound)
+  $('.progress').val(0)
   if track.virtualTimeStamp
     position        = new Date() - track.virtualTimeStamp
     currentSound    = Session.get('currentSound')
