@@ -7,8 +7,13 @@ Template.layout.helpers
   paused : -> Session.get('currentSound').paused
 
   message : ->
-    track = Messages.find({userId: Meteor.userId()}).fetch()[0]
+    if Session.get('seedId')
+      seedId = Session.get('seedId')
+    else
+      seedId = Meteor.userId()
+    track = Messages.find({userId: seedId}).fetch()[0]
     if track
+      # console.log soundManager.getSoundById(Session.get('currentSound').sID).position
       if ((!Session.get('currentSound')) || (Session.get('currentSoundId') != track.trackId))
         if Session.get('currentSound')
           stopTrack()
@@ -16,19 +21,25 @@ Template.layout.helpers
           useHTML5Audio: true
           preferFlash: false
           autoPlay: true
+          onload: -> setPosition(this, seedId)
           onfinish: -> nextTrack()
           onplay: -> setNewTrack(track, this)
+          # whileplaying: -> sendPosition(this)
           # onload: () ->
           #   if ((this.readyState == 2) && (u.activeState == 'streaming'))
           #     Session.set "currentSound", this
       return [track]
-    else if Session.get("currentSound")
-      nextTrack()
-      return false
+    # else if Session.get("currentSound")
+    #   console.log 'next track'
+    #   nextTrack()
+    #   return false
 
   queued: ->
-    Messages.find({userId: Meteor.userId()}, {limit: 10})
-
+    if Session.get('seedId')
+      seedId = Session.get('seedId')
+    else
+      seedId = Meteor.userId()
+    Messages.find({userId: seedId}, {limit: 10})
 
 Template.layout.events =
   "click .skip" : () -> nextTrack()
@@ -67,7 +78,12 @@ stopTrack = () ->
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
-  Meteor.call "setRoomTrack", track.title
+
+sendPosition = (sound) ->
+  Meteor.call 'setPosition', sound.position
+
+setPosition = (sound) ->
+  soundManager.setPosition(sound, Rooms.findOne({userId: seedId}).position)
 
 dragStart = (e) ->
   $(e.target).addClass('dragged')

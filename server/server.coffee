@@ -4,9 +4,14 @@ Meteor.methods
     Rooms.insert
       userId : Meteor.userId()
       username : Meteor.user().username
-      current_track: undefined
       user_count : 0
+      listener_count : 0
+      seedId : Meteor.userId()
       creation_date : new Date()
+      position: 0
+
+  setPosition : (position) ->
+    Rooms.update({userId: Meteor.userId()}, {$set: {position: position}})
 
   joinRoom : (roomId) ->
     if not checkIsValidRoom roomId then return
@@ -19,13 +24,10 @@ Meteor.methods
 
     roomUsers = UserPresences.find "data.roomId" : roomId
     roomUsersCount = roomUsers.count()-1
-    if roomUsersCount <= 0
-      removeRoom roomId
-    else
-      Rooms.update roomId, $set: user_count:roomUsersCount
-
-  setRoomTrack : (title) ->
-    Rooms.update({userId: Meteor.userId()}, {$set: {current_track: title}})
+    # if roomUsersCount <= 0
+    #   removeRoom roomId
+    # else
+    Rooms.update roomId, $set: user_count:roomUsersCount
 
   createMessage : (params={}) ->
     return unless params
@@ -34,12 +36,12 @@ Meteor.methods
       userId : Meteor.userId()
       creation_date : new Date()
       trackId : params.track.trackId
-      artwork_url: params.track.artwork_url
-      description: params.track.description
-      genre: params.track.genre
-      title: params.track.title
-      user: params.track.user
-      duration: params.track.duration
+      artwork_url : params.track.artwork_url
+      description : params.track.description
+      genre : params.track.genre
+      title : params.track.title
+      user : params.track.user
+      duration : params.track.duration
 
   createResult : (params={}) ->
     return unless params
@@ -55,13 +57,18 @@ Meteor.methods
       user: params.track.user
       duration: params.track.duration
 
-  removeOldResults: (userId) ->
+  removeOldResults : (userId) ->
     Results.remove {userId: userId}
 
-  removeOldestTrack: ->
+  removeOldestTrack : ->
     if Messages.find({userId: Meteor.userId()}).count()
       _id = Messages.find({userId: Meteor.userId()}).fetch()[0]._id
       Messages.remove({_id: _id})
+
+  addSeed : (seedId) ->
+    amount = if seedId then 1 else (-1)
+    Rooms.update({userId: Meteor.userId()}, {$set: {seedId: seedId}})
+    Rooms.update({userId: Meteor.userId()}, {$inc: {listener_count: amount}})
 
 # Setup an onDisconnect handler on UserPresenceSettings (from dpid:user-presence package).
 # Usually we update the user count in a room when the user leaves the room manually.
@@ -76,14 +83,14 @@ UserPresenceSettings
     # the page or get disconnected for a moment.
     roomUsers = UserPresences.find "data.roomId" : roomId
     roomUsersCount = roomUsers.count()-1
-    if roomUsersCount <= 0
-      Meteor.setTimeout ->
-        roomUsers = UserPresences.find "data.roomId" : roomId
-        roomUsersCount = roomUsers.count()
-        if roomUsersCount <= 0 then removeRoom roomId
-      , 1000
-    else
-      Rooms.update roomId, $set: user_count:roomUsersCount
+    # if roomUsersCount <= 0
+    #   Meteor.setTimeout ->
+    #     roomUsers = UserPresences.find "data.roomId" : roomId
+    #     roomUsersCount = roomUsers.count()
+    #     if roomUsersCount <= 0 then removeRoom roomId
+    #   , 1000
+    # else
+    Rooms.update roomId, $set: user_count:roomUsersCount
 
 
 checkIsValidRoom = (roomId) ->

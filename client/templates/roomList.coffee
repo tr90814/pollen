@@ -1,9 +1,13 @@
 # Template helpers
 Template.roomList.helpers
   # Find rooms and sort by create date.
-  rooms : -> Rooms.find {userId: {$ne: Meteor.userId()}}, sort : creation_date : 'desc'
+  rooms : ->
+    Rooms.find {userId: {$ne: Meteor.userId()}}, sort : creation_date : 'desc'
 
-  currentTrack : -> this.current_track
+  currentTrack : ->
+    seedId = this.seedId
+    if track = Messages.find({userId: seedId}).fetch()[0]
+      track.title
 
   results: ->
     if Results.find({userId: Meteor.userId()}).count()

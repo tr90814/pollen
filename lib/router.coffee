@@ -3,8 +3,11 @@ Router.configure
   layoutTemplate: "layout"
   notFoundTemplate: "home"
   waitOn: ->
+    if Meteor.userId()
+      unless Session.get "seedId"
+        Session.set "seedId", Meteor.userId()
+      Meteor.subscribe "roomMessages", Session.get("seedId")
     Meteor.subscribe "allRooms"
-    Meteor.subscribe "roomMessages", Meteor.userId()
 
 # Define page routes.
 Router.map ->
@@ -30,8 +33,7 @@ Router.map ->
         Meteor.subscribe "roomUsers", @.params._id
         if Session.get "roomId"
           Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).userId
-          console.log(Rooms.find().fetch())
-          console.log(Session.get "roomId")
+          Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).seedId
       # When navigating to a room we want to call joinRoom so the server can handle it.
       # Then, we set the session roomId. This will reactivley update user presence data.
       action : ->
