@@ -115,26 +115,31 @@ setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
 
+getItem = (e) ->
+  if $(e.target).hasClass('item')
+    return $(e.target)
+  $(e.target).parents('.item')
+
 dragStart = (e) ->
-  $(e.target).parents('.item').addClass('dragged')
+  getItem(e).addClass('dragged')
 
 dragEnter = (e) ->
   e.preventDefault()
-  $(e.target).parents('.item').addClass('dragged-over')
+  getItem(e).addClass('dragged-over')
 
 dragOver = (e) ->
   e.preventDefault()
-  $(e.target).parents('.item').addClass('dragged-over')
+  getItem(e).addClass('dragged-over')
 
 dragLeave = (e) ->
   e.preventDefault()
-  $(e.target).parents('.item').removeClass('dragged-over')
+  getItem(e).removeClass('dragged-over')
 
 drop = (e) ->
   player = $('#player-sticky')
   player.find('li').removeClass('dragged-over')
   draggedFrom       = player.find('.dragged')
-  draggedTo         = $(e.target).parents('.item')
+  draggedTo         = getItem(e)
   draggedFromImg    = draggedFrom.children().clone()
   draggedToImg      = draggedTo.children()
 
