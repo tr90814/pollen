@@ -52,6 +52,7 @@ Template.layout.events =
   "click .play"   : () -> togglePause(true)
   "dragstart li"  : (e) -> dragStart(e)
   "dragenter li"  : (e) -> dragEnter(e)
+  "dragover li"  : (e) -> dragOver(e)
   "dragleave li"  : (e) -> dragLeave(e)
   "drop li"       : (e) -> drop(e)
   "change .progress" : () -> changeSlider()
@@ -136,10 +137,9 @@ drop = (e) ->
   draggedFromImg    = draggedFrom.children().clone()
   draggedToImg      = draggedTo.children()
 
-  return unless draggedFrom.attr('draggable') == true
-
-  draggedFrom.html(draggedToImg)
-  draggedTo.html(draggedFromImg)
+  if draggedFrom.attr('draggable') == true
+    draggedFrom.html(draggedToImg)
+    draggedTo.html(draggedFromImg)
   player.find('.dragged').removeClass('dragged')
   e.preventDefault()
 
