@@ -1,6 +1,4 @@
-# Template helpers
 Template.roomList.helpers
-  # Find rooms and sort by create date.
   rooms : ->
     Rooms.find {userId: {$ne: Meteor.userId()}}, sort : creation_date : 'desc'
 
@@ -16,7 +14,6 @@ Template.roomList.helpers
     if Results.find({userId: Meteor.userId()}).count()
       Results.find {userId: Meteor.userId()}
 
-# Template events
 Template.roomList.events
   "submit [data-action=search]" : (event, template) ->
     event.preventDefault()

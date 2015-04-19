@@ -19,7 +19,6 @@ Router.map ->
       template : "roomList"
       waitOn : ->
         Meteor.subscribe "searchResults", Meteor.username
-      # Set the session roomId to null when navigating to a non room page.
       action : ->
         Session.set "roomId", null
         Session.set "roomUserId", null

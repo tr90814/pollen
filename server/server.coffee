@@ -8,22 +8,6 @@ Meteor.methods
       creation_date : new Date()
       position: 0
 
-  # joinRoom : (roomId) ->
-  #   if not checkIsValidRoom roomId then return
-
-  #   roomUsers = UserPresences.find "data.roomId" : roomId
-  #   Rooms.update roomId, $set: user_count: roomUsers.count()+1
-
-  # leaveRoom : (roomId) ->
-  #   if not checkIsValidRoom roomId then return
-
-  #   roomUsers = UserPresences.find "data.roomId" : roomId
-  #   roomUsersCount = roomUsers.count()-1
-  #   # if roomUsersCount <= 0
-  #   #   removeRoom roomId
-  #   # else
-  #   Rooms.update roomId, $set: user_count:roomUsersCount
-
   createMessage : (params={}) ->
     return unless params
     Messages.insert

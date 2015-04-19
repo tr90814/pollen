@@ -1,25 +1,23 @@
-# Template helpers
 Template.layout.helpers
-  # Determines if the user is logged in and has a room id.
-  # This is used to see if a "Leave Room" link should be displayed.
-  hasRoomId : -> if Meteor.userId() and Session.get("roomId") then true else false
+  hasRoomId : ->
+    if Meteor.userId() and Session.get("roomId") then true else false
 
-  paused : -> Session.get('currentSound').paused
+  paused : ->
+    Session.get('currentSound').paused
 
-  ownQueue : -> this.userId == Meteor.userId()
+  ownQueue : ->
+    this.userId == Meteor.userId()
 
-  listenersCount : -> Rooms.find({seedId: this.userId}).count()
+  listenersCount : ->
+    Rooms.find({seedId: this.userId}).count()-1
 
-  trackId : -> this._id
+  trackId : ->
+    this._id
 
   message : ->
-    if Session.get('seedId')
-      seedId = Session.get('seedId')
-    else
-      seedId = Meteor.userId()
-    track = Messages.find({userId: seedId}).fetch()[0]
+    seedId = if Session.get('seedId') then Session.get('seedId') else Meteor.userId()
+    track  = Messages.find({userId: seedId}).fetch()[0]
     if track
-      # console.log soundManager.getSoundById(Session.get('currentSound').sID).position
       if (!Session.get('currentSound') || (Session.get('currentSoundId') != track.trackId))
         if Session.get('currentSound')
           stopTrack()
@@ -34,28 +32,21 @@ Template.layout.helpers
       return [track]
     else if Session.get("currentSound")
       stopTrack()
-    # else if Session.get("currentSound")
-    #   console.log 'next track'
-    #   nextTrack()
-    #   return false
 
   queued: ->
-    if Session.get('seedId')
-      seedId = Session.get('seedId')
-    else
-      seedId = Meteor.userId()
+    seedId = if Session.get('seedId') then Session.get('seedId') else Meteor.userId()
     Messages.find({userId: seedId}, {limit: 10})
 
 Template.layout.events =
-  "click .skip"   : () -> nextTrack()
-  "click .pause"  : () -> togglePause(false)
-  "click .play"   : () -> togglePause(true)
-  "dragstart li"  : (e) -> dragStart(e)
-  "dragenter li"  : (e) -> dragEnter(e)
-  "dragover li"  : (e) -> dragOver(e)
-  "dragleave li"  : (e) -> dragLeave(e)
-  "drop li"       : (e) -> drop(e)
-  "change .progress" : () -> changeSlider()
+  "click .skip"      : ()  -> nextTrack()
+  "click .pause"     : ()  -> togglePause(false)
+  "click .play"      : ()  -> togglePause(true)
+  "dragstart li"     : (e) -> dragStart(e)
+  "dragenter li"     : (e) -> dragEnter(e)
+  "dragover li"      : (e) -> dragOver(e)
+  "dragleave li"     : (e) -> dragLeave(e)
+  "drop li"          : (e) -> drop(e)
+  "change .progress" : ()  -> changeSlider()
 
 changeSlider = () ->
   safety = setTimeout(()->
