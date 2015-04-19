@@ -8,9 +8,6 @@ Meteor.methods
       creation_date : new Date()
       position: 0
 
-  setPosition : (position) ->
-    Rooms.update({userId: Meteor.userId()}, {$set: {position: position}})
-
   # joinRoom : (roomId) ->
   #   if not checkIsValidRoom roomId then return
 
@@ -40,8 +37,12 @@ Meteor.methods
       title : params.track.title
       user : params.track.user
       duration : params.track.duration
+      virtualTimeStamp : undefined
 
-  switchQueueOrder : (params={}) ->
+  setVirtualTimeStamp : (id, time) ->
+    Messages.update({_id: id}, {$set: {virtualTimeStamp: time}})
+
+  switchMessageOrder : (params={}) ->
     from = Messages.findOne({_id: params.fromId})
     to   = Messages.findOne({_id: params.toId})
 

@@ -20,20 +20,17 @@ Template.layout.helpers
     track = Messages.find({userId: seedId}).fetch()[0]
     if track
       # console.log soundManager.getSoundById(Session.get('currentSound').sID).position
-      if ((!Session.get('currentSound')) || (Session.get('currentSoundId') != track.trackId))
+      if (!Session.get('currentSound') || (Session.get('currentSoundId') != track.trackId))
         if Session.get('currentSound')
           stopTrack()
         SC.stream "/tracks/" + track.trackId,
           useHTML5Audio: true
           preferFlash: false
           autoPlay: true
-          onload: -> setPosition(this, seedId)
           onfinish: -> nextTrack()
-          onplay: -> setNewTrack(track, this)
-          # whileplaying: -> sendPosition(this)
-          # onload: () ->
-          #   if ((this.readyState == 2) && (u.activeState == 'streaming'))
-          #     Session.set "currentSound", this
+          onplay: -> onPlay(this, track)
+          onload: -> setNewTrack(track, this)
+          whileplaying: -> timer(this)
       return [track]
     else if Session.get("currentSound")
       stopTrack()
@@ -50,21 +47,49 @@ Template.layout.helpers
     Messages.find({userId: seedId}, {limit: 10})
 
 Template.layout.events =
-  "click .skip" : () -> nextTrack()
+  "click .skip"   : () -> nextTrack()
+  "click .pause"  : () -> togglePause(false)
+  "click .play"   : () -> togglePause(true)
+  "dragstart li"  : (e) -> dragStart(e)
+  "dragenter li"  : (e) -> dragEnter(e)
+  "dragleave li"  : (e) -> dragLeave(e)
+  "drop li"       : (e) -> drop(e)
+  "change .progress" : () -> changeSlider()
 
-  "click .pause" : () -> togglePause(false)
+changeSlider = () ->
+  safety = setTimeout(()->
+    sound = Session.get('currentSound')
+    position = $('.progress').val()*sound.durationEstimate/100
+    soundManager.setPosition(sound.sID, position)
+  , 20)
 
-  "click .play" : () -> togglePause(true)
+timer = (sound) ->
+  $('.timer').html(timeFormat(sound.position) + '/' + timeFormat(sound.durationEstimate))
+  $('.load > span').css({width: "#{(sound.duration/sound.durationEstimate) * 100}%" })
+  newPosition = (sound.position/sound.durationEstimate) * 100
+  progress = $('.progress')
+  if Math.abs(newPosition - progress.val()) < 3
+    $('.progress').val(newPosition)
 
-  "dragstart li" : (e) -> dragStart(e)
+timeFormat = (milliSeconds) ->
+  time    = Math.floor(milliSeconds / 1000)
+  minutes = Math.floor(time / 60)
+  seconds = (time % 60)
+  if seconds < 10 then seconds = "0" + seconds
+  return minutes + ':' + seconds
 
-  "dragenter li" : (e) -> dragEnter(e)
+onPlay = (sound, track) ->
+  Meteor.call 'setVirtualTimeStamp', track._id, new Date()
+  setNewTrack(track, sound)
+  if track.virtualTimeStamp
+    position        = new Date() - track.virtualTimeStamp
+    currentSound    = Session.get('currentSound')
+    currentPosition = soundManager.getSoundById(currentSound.sID).position
 
-  "dragleave li" : (e) -> dragLeave(e)
-
-  "drop li" : (e) -> drop(e)
-
-  "dragover li" : (e) -> dragOver(e)
+    # if position - currentPosition > 50
+      # soundManager.setPosition(currentSound.sID, 5000)
+      # console.log position
+      # console.log currentPosition
 
 togglePause = (bool) ->
   currentSound = Session.get('currentSound')
@@ -82,16 +107,11 @@ stopTrack = () ->
     soundManager.stop(Session.get('currentSound').sID)
     Session.set "currentSound", undefined
     Session.set "currentSoundId", undefined
+  Meteor.call 'setVirtualTimeStamp', undefined
 
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
-
-sendPosition = (sound) ->
-  Meteor.call 'setPosition', sound.position
-
-setPosition = (sound) ->
-  soundManager.setPosition(sound, Rooms.findOne({userId: seedId}).position)
 
 dragStart = (e) ->
   $(e.target).parents('.item').addClass('dragged')
@@ -123,7 +143,7 @@ drop = (e) ->
   player.find('.dragged').removeClass('dragged')
   e.preventDefault()
 
-  Meteor.call('switchQueueOrder', {
+  Meteor.call('switchMessageOrder', {
     fromId: draggedFrom.attr('data-id'),
     toId: draggedTo.attr('data-id')
   })

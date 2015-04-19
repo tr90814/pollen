@@ -41,6 +41,26 @@
   button
     display: inline
     float: left
+  .bar
+    position: relative
+    span
+      position: absolute
+      left: 0
+      width: 0
+      top: 0
+      bottom: 0
+      opacity: .5
+      background: red
+  .progress
+    width: 200px
+    position: relative
+    .pointer
+      width: 2px
+      height: 100%
+      background: black
+      position: absolute
+      margin-left: -1px
+      left: 0
 
 #queue
   margin-top: 10px
