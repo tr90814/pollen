@@ -5,7 +5,7 @@ Template.roomList.helpers
     Rooms.find {userId: {$ne: Meteor.userId()}}, sort : creation_date : 'desc'
 
   currentTrack : ->
-    seedId = this.seedId || Meteor.userId()
+    seedId = this.seedId
     if track = Messages.find({userId: seedId}).fetch()[0]
       track.title
 
