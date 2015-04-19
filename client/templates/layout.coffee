@@ -65,8 +65,8 @@ changeSlider = () ->
   , 20)
 
 timer = (sound) ->
-  $('.timer').html(timeFormat(sound.position) + '/' + timeFormat(sound.durationEstimate))
-  $('.load > span').css({width: "#{(sound.duration/sound.durationEstimate) * 100}%" })
+  $('.timer .time').html(timeFormat(sound.position) + '/' + timeFormat(sound.durationEstimate))
+  $('.load').css({width: "#{(sound.duration/sound.durationEstimate) * 100}%" })
   newPosition = (sound.position/sound.durationEstimate) * 100
   progress = $('.progress')
   if Math.abs(newPosition - progress.val()) < 3

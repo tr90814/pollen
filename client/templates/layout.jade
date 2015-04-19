@@ -23,9 +23,9 @@ template(name="layout")
         input.btn.btn-default.pause(placeholder="Pause ||")
         input.btn.btn-default.play(placeholder="Play >")
         input.btn.btn-default.count(placeholder="Listeners: #{listenersCount}")
-        span.btn.btn-default.timer 0:00
-        span.load.bar.btn.btn-default
-          span
+        div.btn.btn-default.timer
+          span.load
+          span.time 0:00
         input(type="range" name="progress" min="0" max="100" value="0").progress
     #queue
       ul
