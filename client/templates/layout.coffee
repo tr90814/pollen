@@ -90,21 +90,17 @@ setPosition = (sound) ->
   soundManager.setPosition(sound, Rooms.findOne({userId: seedId}).position)
 
 dragStart = (e) ->
-  console.log 'dragstart'
   $(e.target).parents('.item').addClass('dragged')
 
 dragEnter = (e) ->
-  console.log 'dragenter'
   e.preventDefault()
   $(e.target).parents('.item').addClass('dragged-over')
 
 dragOver = (e) ->
-  console.log 'dragover'
   e.preventDefault()
   $(e.target).parents('.item').addClass('dragged-over')
 
 dragLeave = (e) ->
-  console.log 'dragleave'
   e.preventDefault()
   $(e.target).parents('.item').removeClass('dragged-over')
 
