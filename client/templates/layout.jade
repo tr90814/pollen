@@ -24,9 +24,16 @@ template(name="layout")
     #queue
       ul
         each queued
-          li(draggable="true")
-            span.artwork
-              img(src="#{artwork_url}")
-            span.title #{title}
-            span.user #{user.username}
+          if ownQueue
+            li(draggable="true", data-id="#{trackId}").item
+              span.artwork
+                  img(src="#{artwork_url}")
+                span.title #{title}
+                span.user #{user.username}
+          else
+            li.item
+              span.artwork
+                img(src="#{artwork_url}")
+              span.title #{title}
+              span.user #{user.username}
 

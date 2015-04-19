@@ -6,6 +6,10 @@ Template.layout.helpers
 
   paused : -> Session.get('currentSound').paused
 
+  ownQueue : -> this.userId == Meteor.userId()
+
+  trackId : -> this._id
+
   message : ->
     if Session.get('seedId')
       seedId = Session.get('seedId')
@@ -86,29 +90,36 @@ setPosition = (sound) ->
   soundManager.setPosition(sound, Rooms.findOne({userId: seedId}).position)
 
 dragStart = (e) ->
-  $(e.target).addClass('dragged')
+  $(e.target).parents('.item').addClass('dragged')
 
 dragEnter = (e) ->
   e.preventDefault()
-  $(e.target).addClass('dragged-over')
+  $(e.target).parents('.item').addClass('dragged-over')
 
 dragOver = (e) ->
   e.preventDefault()
-  $(e.target).addClass('dragged-over')
+  $(e.target).parents('.item').addClass('dragged-over')
 
 dragLeave = (e) ->
   e.preventDefault()
-  $(e.target).removeClass('dragged-over')
+  $(e.target).parents('.item').removeClass('dragged-over')
 
 drop = (e) ->
-  player = $('#player')
+  player = $('#player-sticky')
   player.find('li').removeClass('dragged-over')
   draggedFrom       = player.find('.dragged')
-  draggedFromImg    = draggedFrom.find('img').clone()
-  draggedToImg      = $(e.target).find('img')
+  draggedTo         = $(e.target).parents('.item')
+  draggedFromImg    = draggedFrom.children().clone()
+  draggedToImg      = draggedTo.children()
+
   draggedFrom.html(draggedToImg)
-  $(e.target).html(draggedFromImg)
+  draggedTo.html(draggedFromImg)
   player.find('.dragged').removeClass('dragged')
   e.preventDefault()
+
+  Meteor.call('switchQueueOrder', {
+    fromId: draggedFrom.attr('data-id'),
+    toId: draggedTo.attr('data-id')
+  })
 
 
