@@ -1,6 +1,7 @@
 Template.roomList.helpers
   rooms : ->
-    Rooms.find {userId: {$ne: Meteor.userId()}}, sort : creation_date : 'desc'
+    # Rooms.find {userId: {$ne: Meteor.userId()}}, sort : creation_date : 'desc'
+    Rooms.find {}, sort : creation_date : 'desc'
 
   currentTrack : ->
     seedId = this.seedId

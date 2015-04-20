@@ -38,15 +38,20 @@ Template.layout.helpers
     Messages.find({userId: seedId}, {limit: 10})
 
 Template.layout.events =
-  "click .skip"      : ()  -> nextTrack()
-  "click .pause"     : ()  -> togglePause(false)
-  "click .play"      : ()  -> togglePause(true)
-  "dragstart li"     : (e) -> dragStart(e)
-  "dragenter li"     : (e) -> dragEnter(e)
-  "dragover li"      : (e) -> dragOver(e)
-  "dragleave li"     : (e) -> dragLeave(e)
-  "drop li"          : (e) -> drop(e)
-  "change .progress" : ()  -> changeSlider()
+  "click .skip"             : ()  -> nextTrack()
+  "click .pause"            : ()  -> togglePause(false)
+  "click .play"             : ()  -> togglePause(true)
+  "click .show-hide-queue"  : ()  -> toggleQueue()
+  "dragstart li"            : (e) -> dragStart(e)
+  "dragenter li"            : (e) -> dragEnter(e)
+  "dragover li"             : (e) -> dragOver(e)
+  "dragleave li"            : (e) -> dragLeave(e)
+  "drop li"                 : (e) -> drop(e)
+  "change .progress"        : ()  -> changeSlider()
+
+toggleQueue = () ->
+  queue = $('#player-sticky .queue')
+  queue.toggleClass('hidden', !queue.hasClass('hidden'))
 
 changeSlider = () ->
   safety = setTimeout(()->

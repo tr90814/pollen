@@ -1,6 +1,24 @@
 template(name="room")
 
-    h3 #{roomName}'s tracks
+    h2 #{roomName}
+
+    #profile
+      h4 Profile
+
+      .well
+        if profile
+          if profile.image
+            .profile-pic(style="background: #{profile.image}")
+          if profile.description
+            span.description-container
+              span.description #{profile.description}
+        if ownProfile
+          input.btn.btn-default.edit-description(value="Edit profile")
+          form.hidden.form-group
+            textarea.form-control
+            input.btn.default-btn(value="submit" type="submit")
+
+    h4 Tracks
 
     label Who's listening to #{roomName}'s tracks:
     #users
@@ -9,17 +27,18 @@ template(name="room")
         //- Setting the state string in the classes will indicate, via css, if a user is online or idle!
         span(class='label label-default #{state}') #{username}
 
-    #player.well
-      if queued.count
-        #queue
-          ul
-            each queued
-              li.item
-                span.artwork
-                  img(src="#{artwork_url}")
-                span.title #{title}
-                span.user #{user.username}
-      if switchState
-        input.btn.btn-default.switch-on(value="Listen to user")
-      else
-        input.btn.btn-default.switch-off(value="Go back to own queue")
+    unless ownProfile
+      #player.well
+        if queued.count
+          .queue
+            ul
+              each queued
+                li.item
+                  span.artwork
+                    img(src="#{artwork_url}")
+                  span.title #{title}
+                  span.user #{user.username}
+        if switchState
+          input.btn.btn-default.switch-on(value="Listen to user")
+        else
+          input.btn.btn-default.switch-off(value="Go back to own queue")

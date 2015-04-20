@@ -22,12 +22,13 @@ template(name="layout")
         input.btn.btn-default.skip(placeholder="Skip >>")
         input.btn.btn-default.pause(placeholder="Pause ||")
         input.btn.btn-default.play(placeholder="Play >")
+        input.btn.btn-default.show-hide-queue(placeholder="Show/hide queue")
         input.btn.btn-default.count(placeholder="Listeners: #{listenersCount}")
         div.btn.btn-default.timer
           span.load
           span.time 0:00
         input(type="range" name="progress" min="0" max="100" value="0").progress
-    #queue
+    .queue.hidden
       ul
         each queued
           if ownQueue

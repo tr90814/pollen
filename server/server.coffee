@@ -5,8 +5,17 @@ Meteor.methods
       userId : Meteor.userId()
       username : Meteor.user().username
       seedId : Meteor.userId()
+      profile:
+        image: randomColour()
+        description: undefined
       creation_date : new Date()
-      position: 0
+
+  editDescription : (params={}) ->
+    return if params.description.length > 100
+    return if Meteor.userId() != params.userId
+    Rooms.update({userId: params.userId}, {$set: {'profile.description': params.description}})
+    unless Rooms.findOne({userId: params.userId}).profile.image
+      Rooms.update({userId: params.userId}, {$set: {'profile.image': randomColour()}})
 
   createMessage : (params={}) ->
     return unless params
@@ -83,6 +92,14 @@ UserPresenceSettings
     # else
     Rooms.update roomId, $set: user_count:roomUsersCount
 
+randomColour = () ->
+  r = randomRGB()
+  g = randomRGB()
+  b = randomRGB()
+  return 'rgb(' + r + ',' + g + ',' + b + ')'
+
+randomRGB = () ->
+  return Math.floor(Math.random()*256)
 
 checkIsValidRoom = (roomId) ->
   if not roomId then false
