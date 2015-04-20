@@ -8,7 +8,7 @@ template(name="roomList")
       each rooms
         a.list-group-item(href="/room/#{_id}" title=name data-id=_id) #{username}
           if currentTrack
-            span.current-track - current track - #{currentTrack}
+            span.current-track - #{currentTrack}
           else
             span.current-track - No track
           .badge listeners: #{listenerCount}
@@ -18,7 +18,7 @@ template(name="roomList")
   h3 Search for your own tracks
 
   form.input-group(data-action="search")
-    input.form-control(data-value="search" placeholder="Search for tracks")
+    input.form-control.search-input(data-value="search" placeholder="Search for tracks")
     span.input-group-btn
       input.btn.btn-default(type="submit" value="Search")
 

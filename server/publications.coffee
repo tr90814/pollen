@@ -9,9 +9,7 @@ Messages.allow({
 
 
 # Add animation to the slider to maek it smooth
-# Powered by soundcloud
 # Playlists
-# profiles
 # DJ merge
 # search for users
 # paginate tracks

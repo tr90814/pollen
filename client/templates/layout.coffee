@@ -14,13 +14,18 @@ Template.layout.helpers
   trackId : ->
     this._id
 
+  queued: ->
+    Messages.find({userId: getSeedId()}, {limit: 10})
+
   message : ->
-    seedId = if Session.get('seedId') then Session.get('seedId') else Meteor.userId()
-    track  = Messages.find({userId: seedId}).fetch()[0]
-    if track
-      if (!Session.get('currentSound') || (Session.get('currentSoundId') != track.trackId))
+    if track = Messages.find({userId: getSeedId()}).fetch()[0]
+      noTrackPlaying       = !Session.get('currentSound')
+      nextTrackIsDifferent = Session.get('currentSoundId') != track.trackId
+
+      if noTrackPlaying || nextTrackIsDifferent
         if Session.get('currentSound')
           stopTrack()
+
         SC.stream "/tracks/" + track.trackId,
           useHTML5Audio: true
           preferFlash: false
@@ -29,13 +34,11 @@ Template.layout.helpers
           onplay: -> onPlay(this, track)
           onload: -> setNewTrack(track, this)
           whileplaying: -> timer(this)
-      return [track]
+
+      [track]
+
     else if Session.get("currentSound")
       stopTrack()
-
-  queued: ->
-    seedId = if Session.get('seedId') then Session.get('seedId') else Meteor.userId()
-    Messages.find({userId: seedId}, {limit: 10})
 
 Template.layout.events =
   "click .skip"             : ()  -> nextTrack()
@@ -49,9 +52,54 @@ Template.layout.events =
   "drop li"                 : (e) -> drop(e)
   "change .progress"        : ()  -> changeSlider()
 
+# Sound manipulation
+
+onPlay = (sound, track) ->
+  Meteor.call 'setVirtualTimeStamp', track._id, new Date()
+  setNewTrack(track, sound)
+  $('.progress').val(0)
+  if track.virtualTimeStamp
+    position        = new Date() - track.virtualTimeStamp
+    currentSound    = Session.get('currentSound')
+    currentPosition = soundManager.getSoundById(currentSound.sID).position
+
+    # if position - currentPosition > 50
+      # soundManager.setPosition(currentSound.sID, 5000)
+      # console.log position
+      # console.log currentPosition
+
+togglePause = (bool) ->
+  currentSound = Session.get('currentSound')
+  action = if bool then "resume" else "pause"
+  soundManager[action](currentSound.sID)
+
+nextTrack = () ->
+  stopTrack()
+  Meteor.call 'removeOldestTrack'
+
+setNewTrack = (track, obj) ->
+  Session.set "currentSound", obj
+  Session.set "currentSoundId", track.trackId
+
+stopTrack = () ->
+  if soundManager
+    soundManager.stop(Session.get('currentSound').sID)
+    Session.set "currentSound", undefined
+    Session.set "currentSoundId", undefined
+  Meteor.call 'setVirtualTimeStamp', undefined
+
+# Misc helpers
+
 toggleQueue = () ->
   queue = $('#player-sticky .queue')
   queue.toggleClass('hidden', !queue.hasClass('hidden'))
+
+getSeedId = () ->
+  if Session.get('seedId')
+    return Session.get('seedId')
+  Meteor.userId()
+
+# Track time and loading
 
 changeSlider = () ->
   safety = setTimeout(()->
@@ -75,41 +123,7 @@ timeFormat = (milliSeconds) ->
   if seconds < 10 then seconds = "0" + seconds
   return minutes + ':' + seconds
 
-onPlay = (sound, track) ->
-  Meteor.call 'setVirtualTimeStamp', track._id, new Date()
-  setNewTrack(track, sound)
-  $('.progress').val(0)
-  if track.virtualTimeStamp
-    position        = new Date() - track.virtualTimeStamp
-    currentSound    = Session.get('currentSound')
-    currentPosition = soundManager.getSoundById(currentSound.sID).position
-
-    # if position - currentPosition > 50
-      # soundManager.setPosition(currentSound.sID, 5000)
-      # console.log position
-      # console.log currentPosition
-
-togglePause = (bool) ->
-  currentSound = Session.get('currentSound')
-  if bool
-    soundManager.resume(currentSound.sID)
-  else
-    soundManager.pause(currentSound.sID)
-
-nextTrack = () ->
-  stopTrack()
-  Meteor.call 'removeOldestTrack'
-
-stopTrack = () ->
-  if soundManager
-    soundManager.stop(Session.get('currentSound').sID)
-    Session.set "currentSound", undefined
-    Session.set "currentSoundId", undefined
-  Meteor.call 'setVirtualTimeStamp', undefined
-
-setNewTrack = (track, obj) ->
-  Session.set "currentSound", obj
-  Session.set "currentSoundId", track.trackId
+# Drag Queue items
 
 getItem = (e) ->
   if $(e.target).hasClass('item')
