@@ -92,6 +92,10 @@ UserPresenceSettings
     # else
     Rooms.update roomId, $set: user_count:roomUsersCount
 
+    userId = userPresence.userId
+    Rooms.update({userId: userId}, {$set: {seedId: userId}})
+    console.log userId
+
 randomColour = () ->
   r = randomRGB()
   g = randomRGB()
