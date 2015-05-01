@@ -32,7 +32,7 @@ Template.layout.helpers
           autoPlay: true
           onfinish: -> nextTrack()
           onplay: -> onPlay(this, track)
-          onload: -> setNewTrack(track, this)
+          onload: -> setPosition(track, this)
           whileplaying: -> timer(this)
 
       [track]
@@ -45,6 +45,7 @@ Template.layout.events =
   "click .pause"            : ()  -> togglePause(false)
   "click .play"             : ()  -> togglePause(true)
   "click .show-hide-queue"  : ()  -> toggleQueue()
+  "click .switch-off"       : ()  -> backToOwnQueue()
   "dragstart li"            : (e) -> dragStart(e)
   "dragenter li"            : (e) -> dragEnter(e)
   "dragover li"             : (e) -> dragOver(e)
@@ -55,18 +56,13 @@ Template.layout.events =
 # Sound manipulation
 
 onPlay = (sound, track) ->
-  Meteor.call 'setVirtualTimeStamp', track._id, new Date()
+  Meteor.call 'setCurrentTrack',
+    title: track.title
+    artist: track.user.username
+  if track.userId == Meteor.userId()
+    Meteor.call 'setVirtualTimeStamp', track._id, new Date()
   setNewTrack(track, sound)
   $('.progress').val(0)
-  if track.virtualTimeStamp
-    position        = new Date() - track.virtualTimeStamp
-    currentSound    = Session.get('currentSound')
-    currentPosition = soundManager.getSoundById(currentSound.sID).position
-
-    # if position - currentPosition > 50
-      # soundManager.setPosition(currentSound.sID, 5000)
-      # console.log position
-      # console.log currentPosition
 
 togglePause = (bool) ->
   currentSound = Session.get('currentSound')
@@ -80,13 +76,26 @@ nextTrack = () ->
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
+  if obj.readyState == 2
+    Meteor.call 'removeOldestTrack'
+    return
+
+setPosition = (track, obj) ->
+  if track.virtualTimeStamp && track.userId != Meteor.userId()
+    position     = new Date() - track.virtualTimeStamp
+    currentSound = Session.get('currentSound')
+    soundManager.setPosition(currentSound.sID, position)
 
 stopTrack = () ->
   if soundManager
     soundManager.stop(Session.get('currentSound').sID)
     Session.set "currentSound", undefined
     Session.set "currentSoundId", undefined
-  Meteor.call 'setVirtualTimeStamp', undefined
+  Meteor.call 'setCurrentTrack', undefined
+
+backToOwnQueue = () ->
+  Meteor.call "changeSeed", Meteor.userId()
+  Session.set "seedId", Meteor.userId()
 
 # Misc helpers
 
@@ -106,6 +115,7 @@ changeSlider = () ->
     sound = Session.get('currentSound')
     position = $('.progress').val()*sound.durationEstimate/100
     soundManager.setPosition(sound.sID, position)
+    # Meteor.call "setVirtualTimeStamp", sound._id, new Date(new Date().getTime() - position)
   , 20)
 
 timer = (sound) ->

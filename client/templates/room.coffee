@@ -18,8 +18,8 @@ Template.room.helpers
       Rooms.findOne(Session.get('roomId')).userId == Meteor.userId()
 
   roomUsers : ->
-    if Session.get 'roomId'
-      roomsUserId = Rooms.findOne({_id: Session.get('roomId')}).userId
+    if roomId = Session.get 'roomId'
+      roomsUserId = Rooms.findOne({_id: roomId}).userId
       Rooms.find({seedId: roomsUserId}).fetch()
 
   switchState : ->

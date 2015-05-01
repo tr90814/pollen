@@ -7,7 +7,6 @@ Router.configure
       unless Session.get "seedId"
         Session.set "seedId", Meteor.userId()
       Meteor.subscribe "roomMessages", Session.get("seedId")
-    Meteor.subscribe "allRooms"
 
 # Define page routes.
 Router.map ->
@@ -19,6 +18,7 @@ Router.map ->
       template : "roomList"
       waitOn : ->
         Meteor.subscribe "searchResults", Meteor.username
+        Meteor.subscribe "activeRooms"
       action : ->
         Session.set "roomId", null
         Session.set "roomUserId", null
@@ -30,6 +30,7 @@ Router.map ->
       # See, server/publications.coffee for publication setup.
       waitOn : ->
         # Meteor.subscribe "roomUsers", @.params._id
+        Meteor.subscribe "allRooms"
         if Session.get "roomId"
           Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).userId
           Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).seedId

@@ -5,6 +5,7 @@ Meteor.methods
       userId : Meteor.userId()
       username : Meteor.user().username
       seedId : Meteor.userId()
+      currentTrack : undefined
       profile:
         image: randomColour()
         description: undefined
@@ -33,7 +34,10 @@ Meteor.methods
       virtualTimeStamp : undefined
 
   setVirtualTimeStamp : (id, time) ->
-    Messages.update({_id: id}, {$set: {virtualTimeStamp: time}})
+    return unless id && Messages.findOne({_id: id})
+    userId = Messages.findOne({_id: id}).userId
+    if userId == Meteor.userId()
+      Messages.update({_id: id}, {$set: {virtualTimeStamp: time}})
 
   switchMessageOrder : (params={}) ->
     from = Messages.findOne({_id: params.fromId})
@@ -69,6 +73,9 @@ Meteor.methods
 
   changeSeed : (seedId) ->
     Rooms.update({userId: Meteor.userId()}, {$set: {seedId: seedId}})
+
+  setCurrentTrack : (track) ->
+    Rooms.update({userId: Meteor.userId()}, {$set: {currentTrack: track}})
 
 # Setup an onDisconnect handler on UserPresenceSettings (from dpid:user-presence package).
 # Usually we update the user count in a room when the user leaves the room manually.

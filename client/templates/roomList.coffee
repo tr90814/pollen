@@ -4,9 +4,8 @@ Template.roomList.helpers
     Rooms.find {}, sort : creation_date : 'desc'
 
   currentTrack : ->
-    seedId = this.seedId
-    if track = Messages.find({userId: seedId}).fetch()[0]
-      track.title
+    if currentTrack = this.currentTrack
+      return currentTrack.title + ' - ' + currentTrack.artist
 
   listenerCount : ->
     Rooms.find(userId: this.seedId).count()-1

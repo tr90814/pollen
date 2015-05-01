@@ -29,6 +29,8 @@ template(name="layout")
           span.load
           span.time 0:00
         input(type="range" name="progress" min="0" max="100" value="0").progress
+      else
+        input.btn.btn-default.switch-off(value="Go back to own queue")
     .queue.hidden
       ul
         each queued
