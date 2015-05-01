@@ -85,6 +85,7 @@ setPosition = (track, obj) ->
     position     = new Date() - track.virtualTimeStamp
     currentSound = Session.get('currentSound')
     soundManager.setPosition(currentSound.sID, position)
+  setNewTrack(track, obj)
 
 stopTrack = () ->
   if soundManager
@@ -115,7 +116,7 @@ changeSlider = () ->
     sound = Session.get('currentSound')
     position = $('.progress').val()*sound.durationEstimate/100
     soundManager.setPosition(sound.sID, position)
-    # Meteor.call "setVirtualTimeStamp", sound._id, new Date(new Date().getTime() - position)
+    Meteor.call "setVirtualTimeStamp", sound._id, new Date(new Date().getTime() - position)
   , 20)
 
 timer = (sound) ->

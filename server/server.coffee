@@ -101,7 +101,6 @@ UserPresenceSettings
 
     userId = userPresence.userId
     Rooms.update({userId: userId}, {$set: {seedId: userId}})
-    console.log userId
 
 randomColour = () ->
   r = randomRGB()
