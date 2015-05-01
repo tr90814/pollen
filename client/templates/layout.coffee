@@ -20,6 +20,7 @@ Template.layout.helpers
   message : ->
     if track = Messages.find({userId: getSeedId()}).fetch()[0]
       noTrackPlaying       = !Session.get('currentSound')
+      Session.set 'currentSound', true if noTrackPlaying
       nextTrackIsDifferent = Session.get('currentSoundId') != track.trackId
 
       if noTrackPlaying || nextTrackIsDifferent
