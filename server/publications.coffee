@@ -22,3 +22,7 @@ Messages.allow({
 # like sticking your head out of the window
 # its alive - not a filing cabinet
 # what are the metrics for tree ranking - how many followers/how long youve been on
+
+
+
+#SIMON WORDS TO MUM

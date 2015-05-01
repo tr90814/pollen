@@ -8,7 +8,9 @@ Template.roomList.helpers
       return currentTrack.title + ' - ' + currentTrack.artist
 
   listenerCount : ->
-    Rooms.find(userId: this.seedId).count()-1
+    count = Rooms.find({seedId: this.userId}).count()-1
+    if count < 0 then count = 0
+    return count
 
   results: ->
     if Results.find({userId: Meteor.userId()}).count()
