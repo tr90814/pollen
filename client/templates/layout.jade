@@ -31,7 +31,7 @@ template(name="layout")
         input(type="range" name="progress" min="0" max="100" value="0").progress
       else
         input.btn.btn-default.switch-off(value="Go back to own queue")
-    .queue.hidden
+    .queue
       ul
         each queued
           if ownQueue
