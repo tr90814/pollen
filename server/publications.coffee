@@ -1,12 +1,18 @@
 Meteor.publish "allRooms",      () ->         Rooms.find()
 Meteor.publish "activeRooms",   () ->         Rooms.find({currentTrack: {$ne: undefined}})
-Meteor.publish "roomMessages",  (userId) ->   Messages.find userId : userId
 Meteor.publish "searchResults", (username) -> Results.find "data.username" : username
-# Meteor.publish "roomUsers",   (seedId) ->   Rooms.find "data.seedId" : seedId
-Meteor.publish "roomUsers", (username) -> UserPresences.data
+Meteor.publish "roomUsers",     (username) -> UserPresences.data
+Meteor.publish "roomMessages",  (roomId) ->   return findMessages(Rooms.findOne({userId: roomId}).userId)
+
 Messages.allow({
   remove: -> return true
 })
+
+findMessages = (userId) ->
+  seedId = Rooms.findOne({userId: userId}).seedId
+  if seedId == userId
+    return Messages.find({userId : userId})
+  findMessages(seedId)
 
 # Add animation to the slider to make it smooth
 # Playlists

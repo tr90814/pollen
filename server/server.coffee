@@ -31,13 +31,13 @@ Meteor.methods
       title : params.track.title
       user : params.track.user
       duration : params.track.duration
-      virtualTimeStamp : undefined
+      # virtualTimeStamp : undefined
 
-  setVirtualTimeStamp : (id, time) ->
-    return unless id && Messages.findOne({_id: id})
-    userId = Messages.findOne({_id: id}).userId
-    if userId == Meteor.userId()
-      Messages.update({_id: id}, {$set: {virtualTimeStamp: time}})
+  # setVirtualTimeStamp : (id, time) ->
+  #   return unless id && Messages.findOne({_id: id})
+  #   userId = Messages.findOne({_id: id}).userId
+  #   if userId == Meteor.userId()
+  #     Messages.update({_id: id}, {$set: {virtualTimeStamp: time}})
 
   switchMessageOrder : (params={}) ->
     from = Messages.findOne({_id: params.fromId})
@@ -82,8 +82,13 @@ Meteor.methods
 # However, we also need to handle updating the count when a user disconnects.
 UserPresenceSettings
   onDisconnect : (userPresence={}) ->
+    userId = userPresence.userId
+    Rooms.update({userId: userId}, {$set: {currentTrack: undefined}})
+    Rooms.update({userId: userId}, {$set: {seedId: userId}})
+
     if not userPresence.data or not userPresence.data.roomId then return
     roomId = userPresence.data.roomId
+
     if not checkIsValidRoom roomId then return
     # If no users left in the room, then remove after a short delay if still empty.
     # The delay is handle the edge case where the user is the only one in the room and they refresh
@@ -98,9 +103,6 @@ UserPresenceSettings
     #   , 1000
     # else
     Rooms.update roomId, $set: user_count:roomUsersCount
-
-    userId = userPresence.userId
-    Rooms.update({userId: userId}, {$set: {seedId: userId}})
 
 randomColour = () ->
   r = randomRGB()

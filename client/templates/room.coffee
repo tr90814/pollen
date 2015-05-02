@@ -27,7 +27,7 @@ Template.room.helpers
       Rooms.findOne(Session.get('roomId')).seedId != Session.get("seedId")
 
 Template.room.events =
-  "click #queue li" : () ->
+  "click .queue li" : () ->
     Meteor.call "createMessage",
       roomId: Session.get "roomId"
       track: this

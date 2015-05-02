@@ -29,16 +29,14 @@ Router.map ->
       # Subscribe to the room user list and messages associated with this room id.
       # See, server/publications.coffee for publication setup.
       waitOn : ->
-        # Meteor.subscribe "roomUsers", @.params._id
         Meteor.subscribe "allRooms"
-        if Session.get "roomId"
-          Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).userId # Not needed?
-          Meteor.subscribe "roomMessages", Rooms.findOne(Session.get('roomId')).seedId
+        if Session.get "roomUserId"
+          Meteor.subscribe "roomMessages", Session.get('roomUserId')
+
       # When navigating to a room we want to call joinRoom so the server can handle it.
       # Then, we set the session roomId. This will reactivley update user presence data.
       action : ->
           Session.set "userName", Meteor.user().username
-          # Meteor.call "joinRoom", @.params._id
           Session.set "roomId", @.params._id
           Session.set "roomUserId", Rooms.findOne(@.params._id).userId
           Meteor.call "createRoom", @.params._id, Meteor.user().username
@@ -46,7 +44,6 @@ Router.map ->
           @.render()
       # Remove user from the list of users on unload
       unload : ->
-        # Meteor.call "leaveRoom", @.params._id
         Meteor.call "changeSeed", Meteor.userId()
         Session.set "roomId", null
 
