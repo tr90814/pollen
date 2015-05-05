@@ -73,7 +73,7 @@ onPlay = (sound, track) ->
   $('.progress').val(0)
 
 togglePause = (bool) ->
-  currentSound = Session.get('currentSound')
+  return unless currentSound = Session.get('currentSound')
   action = if bool then "resume" else "pause"
   soundManager[action](currentSound.sID)
 
