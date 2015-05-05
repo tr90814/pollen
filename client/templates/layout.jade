@@ -14,23 +14,24 @@ template(name="layout")
 
   #player-sticky
     each message
-      .track-info
+      .track-info.col-sm-6.col-xs-12
         span.artwork
           img(src="#{artwork_url}")
         span.title #{title}
         span.user #{user.username}
-      if ownQueue
-        input.btn.btn-default.skip(placeholder="Skip >>")
-        input.btn.btn-default.pause(placeholder="Stop ■")
-        input.btn.btn-default.play(placeholder="Play ►")
-        input.btn.btn-default.show-hide-queue(placeholder="Show/hide queue")
-        input.btn.btn-default.count(placeholder="Listeners: #{listenersCount}")
-        div.btn.btn-default.timer
-          span.load
-          span.time 0:00
-        input(type="range" name="progress" min="0" max="100" value="0").progress
-      else
-        input.btn.btn-default.switch-off(value="Go back to own queue")
+      .pull-right.col-sm-6.col-xs-12
+        if ownQueue
+          input.col-xs-6.col-sm-4.btn.btn-default.skip(placeholder="Skip >>")
+          input.col-xs-6.col-sm-4.btn.btn-default.pause(placeholder="Stop ■")
+          input.col-xs-6.col-sm-4.btn.btn-default.play(placeholder="Play ►")
+          input.col-xs-6.col-sm-4.btn.btn-default.show-hide-queue(placeholder="Show/hide queue")
+          input.col-xs-6.col-sm-4.btn.btn-default.count(placeholder="Listeners: #{listenersCount}")
+          div.col-xs-6.col-sm-4.btn.btn-default.timer
+            span.load
+            span.time 0:00
+          input.col-xs-12(type="range" name="progress" min="0" max="100" value="0").progress
+        else
+          input.btn.btn-default.switch-off(value="Go back to own queue")
     .queue
       ul
         each queued

@@ -1,6 +1,5 @@
 Template.roomList.helpers
   rooms : ->
-    # Rooms.find {userId: {$ne: Meteor.userId()}}, sort : creation_date : 'desc'
     Rooms.find {}, sort : creation_date : 'desc'
 
   currentTrack : ->
@@ -27,14 +26,14 @@ Template.roomList.events
 
     SCSearch($query.val())
 
-    $query.val ""
+    $query.select()
 
   "click .play" : () ->
     Meteor.call "addTrack",
       track: this
       playlistName: Session.get 'currentPlaylist'
 
-  "click .message .username" : () ->
+  "click .message .username" : (event) ->
     $query = $(event.target).html()
     SCSearch($query)
 
@@ -44,13 +43,11 @@ Template.roomList.events
     popup.data('track', this)
     popup.removeClass('hidden')
 
-  "click .playlist-selection input" : () ->
+  "click .playlist-selection input" : (event) ->
     container = $('.playlist-selection')
-    container.addClass('hidden')
-    name = $(event.toElement).data('name')
-    if name == 'current'
-      Session.get 'currentPlaylist'
+    name      = $(event.toElement).data('name')
 
+    container.addClass('hidden')
     Meteor.call "addTrack",
       playlistName: name
       track: container.data('track')

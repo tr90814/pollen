@@ -19,7 +19,13 @@ Meteor.methods
 
   setCurrentPlaylist : (params={}) ->
     return unless params.playlistName
-    Rooms.update({userId: Meteor.userId()}, {$set: {currentPlaylist: params.playlistName}})
+    if !Playlists.find({$and: [{userId: Meteor.userId()}, {name: params.playlistName}]}).count()
+      Meteor.call "createPlaylist",
+        name: params.playlistName
+    Rooms.update(
+      {userId: Meteor.userId()},
+      {$set: {currentPlaylist: params.playlistName}}
+    )
 
   editDescription : (params={}) ->
     return if params.description.length > 100
@@ -34,10 +40,13 @@ Meteor.methods
     unless Playlists.find({name: params.name}).count()
       Meteor.call 'createPlaylist', name: params.playlistName
 
+    count = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}).tracks.length
+
     Playlists.update({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}, {
       $addToSet: {
         tracks: {
           _id: new Meteor.Collection.ObjectID()._str
+          index : count + 1
           username : Meteor.user().username
           userId : Meteor.userId()
           playlistName : params.playlistName
@@ -54,20 +63,28 @@ Meteor.methods
     })
 
   switchTrackOrder : (params={}) ->
-    return unless params.playlistName
-    playlist = Playlists.findOne({$and: [{name: params.playlistName}, {userId: Meteor.userId()}]}).tracks
+    return unless params.toIndex && params.fromIndex
 
-    from = Playlists.findOne({$and: [{name: params.playlistName}, {userId: Meteor.userId()}, {tracks: {_id: params.fromId}}]})
-    to   = Playlists.findOne({$and: [{name: params.playlistName}, {userId: Meteor.userId()}, {tracks: {_id: params.toId}}]})
+    Playlists.update(
+      {$and: [{name: params.playlistName}, {userId: Meteor.userId()},  { 'tracks._id': params.toId}]},
+      { $set: { 'tracks.$.index' : params. fromIndex } }
+    )
 
-    console.log from
-    console.log to
-
-    # to['_id'] = params.fromId
-    # from['_id'] = params.toId
-
-    # Playlists.update({name: params.playlistName}, {tracks: {_id: params.fromId}, to})
-    # Messages.update({_id: params.toId}, from)
+    Playlists.update(
+      {$and: [{name: params.playlistName}, {userId: Meteor.userId()}, { 'tracks._id': params.fromId}]},
+      {$set: {'tracks.$.index' : params. toIndex}}
+    )
+    Playlists.update(
+      {$and: [{name: params.playlistName}, {userId: Meteor.userId()}]},
+      {
+        $push: {
+          tracks: {
+            $each: [],
+            $sort: { index: 1 }
+          }
+        }
+      }
+    )
 
   createPlaylist : (params={}) ->
     params['name'] = params.name || 'defualt'
@@ -95,9 +112,9 @@ Meteor.methods
     Playlists.remove({$and: [{name: params.playlistName}, {userId: Meteor.userId()}]})
 
   removeTrackFromPlaylist : (params) ->
-    return unless params.playlistName && params.trackId
+    return unless params.playlistName && params._id
     return unless Playlists.find({name: params.playlistName}).count()
-    Playlists.update({name: params.playlistName}, {$pull: {tracks: {trackId: params.trackId}}})
+    Playlists.update({name: params.playlistName}, {$pull: {tracks: {_id: params._id}}})
 
   createResult : (params={}) ->
     return unless params
@@ -166,6 +183,5 @@ checkIsValidRoom = (roomId) ->
 
 removeRoom = (roomId) ->
   Rooms.remove roomId
-  # Messages.remove roomId:roomId
   Results.remove roomId:roomId
 

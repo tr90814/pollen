@@ -171,9 +171,9 @@ dragLeave = (e) ->
   getItem(e).removeClass('dragged-over')
 
 drop = (e) ->
-  player = $('#player-sticky')
-  player.find('li').removeClass('dragged-over')
-  draggedFrom       = player.find('.dragged')
+  ul = getItem(e).parents('ul')
+  ul.find('li').removeClass('dragged-over')
+  draggedFrom       = ul.find('.dragged')
   draggedTo         = getItem(e)
   draggedFromImg    = draggedFrom.children().clone()
   draggedToImg      = draggedTo.children()
@@ -181,11 +181,13 @@ drop = (e) ->
   if draggedFrom.attr('draggable') == true
     draggedFrom.html(draggedToImg)
     draggedTo.html(draggedFromImg)
-  player.find('.dragged').removeClass('dragged')
+  ul.find('.dragged').removeClass('dragged')
   e.preventDefault()
 
   Meteor.call 'switchTrackOrder',
     playlistName: Session.get 'currentPlaylist'
+    fromIndex: draggedFrom.index()
+    toIndex: draggedTo.index()
     fromId: draggedFrom.attr('data-id')
     toId: draggedTo.attr('data-id')
 

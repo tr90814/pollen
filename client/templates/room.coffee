@@ -23,7 +23,10 @@ Template.room.helpers
     Playlists.find({userId: Session.get('roomUserId')}).fetch()
 
   tracks : ->
-    this.tracks.slice(0,10)
+    this.tracks
+
+  isDefault : ->
+    this.name == "default"
 
   roomUsers : ->
     if roomId = Session.get 'roomId'
@@ -39,14 +42,20 @@ Template.room.helpers
 
 Template.room.events =
   "click .delete-playlist" : () ->
+    if Session.get('currentPlaylist') == this.name
+      Session.set 'currentPlaylist', 'default'
     Meteor.call 'removePlaylist',
       playlistName : this.name
+    if this.name == 'default'
+      Meteor.call 'createPlaylist',
+        name: 'default'
+        tracks: []
 
   "click .remove-track" : () ->
     return unless this.playlistName
     Meteor.call 'removeTrackFromPlaylist',
       playlistName : this.playlistName
-      trackId : this.trackId
+      _id : this._id
 
   "click .queue li" : () ->
     Meteor.call "addTrack",
@@ -54,7 +63,6 @@ Template.room.events =
       playlistName: Session.get 'currentPlaylist'
 
   "submit [data-action=create-playlist]" : (event) ->
-    debugger
     event.preventDefault()
     $input = $("[data-value=new-playlist]")
     if $input.val() is "" then return
@@ -63,7 +71,7 @@ Template.room.events =
       tracks: []
     $input.val('')
 
-  "click .play-playlist" : () ->
+  "click .play-playlist" : (event) ->
     name = $(event.toElement).parents('.playlist').data('name')
     Session.set 'currentPlaylist', name
     Meteor.call 'setCurrentPlaylist',
@@ -80,10 +88,11 @@ Template.room.events =
     $('.form-group').removeClass('hidden')
 
   "submit form.form-group" : () ->
-    Meteor.call "editDescription", {
+    Meteor.call "editDescription",
       userId: Meteor.userId()
       description: $('.form-group textarea').val()
-    }
+
     $('.edit-description').removeClass('hidden')
     $('.form-group').addClass('hidden')
+
     return false

@@ -20,7 +20,7 @@ template(name="room")
 
     h4 Tracks
 
-    label Who's listening to #{roomName}'s tracks:
+    label Who's listening to #{roomName}:
     #users
       //- Display users in the current room. Since all data is reactive, this will update live.
       each roomUsers
@@ -50,14 +50,20 @@ template(name="room")
         ul
           each playlists
             li.playlist.item(data-name="#{this.name}")
-              label name: #{this.name}
+              if isDefault
+                label Queue
+              else
+                label #{this.name}
               if playlistState
                 a.play-playlist Listen to this playlist
-              a.red.delete-playlist.pull-right Delete
+              if isDefault
+                a.red.delete-playlist.pull-right Clear
+              else
+                a.red.delete-playlist.pull-right Delete
               .queue
                 ul
                   each tracks
-                    li.item
+                    li(draggable="true", data-id="#{_id}").item
                       span.artwork
                         img(src="#{artwork_url}")
                       a.remove-track Remove
@@ -67,5 +73,3 @@ template(name="room")
           input.form-control.search-input(data-value="new-playlist" placeholder="Make a playlist")
           span.input-group-btn
             input.btn.btn-default(type="submit" value="Create")
-
-
