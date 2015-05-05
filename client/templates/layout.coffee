@@ -18,7 +18,7 @@ Template.layout.helpers
     playlist  = Session.get('currentPlaylist')
     seedId    = Session.get('seedId')
     if playlist = Playlists.findOne({$and: [{userId: seedId},{name: playlist}]})
-      playlist.tracks.slice(0,10)
+      playlist.tracks.slice(playlist.position).concat(playlist.tracks.slice(0, playlist.position))
 
   message : ->
     return if Session.get('currentSound') == true
@@ -180,10 +180,10 @@ drop = (e) ->
   player.find('.dragged').removeClass('dragged')
   e.preventDefault()
 
-  Meteor.call('switchMessageOrder', {
-    fromId: draggedFrom.attr('data-id'),
+  Meteor.call 'switchTrackOrder',
+    playlistName: Session.get 'currentPlaylist'
+    fromId: draggedFrom.attr('data-id')
     toId: draggedTo.attr('data-id')
-  })
 
 # backup Radio style
 

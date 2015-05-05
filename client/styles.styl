@@ -23,12 +23,11 @@ a.soundcloud
   margin-top 15px
   padding: 20px 10px
   .message
-    cursor: pointer
     padding: 5px 10px 0px
     border-radius: 3px
     border: 1px solid #eee
   .message:hover
-    background-color: #ddd
+    background-color: #eaeaea
   .message:active
     border-color: rgb(164,211,162)
   .add-to-playlist
@@ -36,6 +35,11 @@ a.soundcloud
     color: black
   .add-to-playlist:hover
     color: rgb(164,211,162)
+  .username,
+  .play
+    cursor: pointer
+  .username:hover
+    color: #666
 
 .playlist-selection
   position: fixed
@@ -156,9 +160,10 @@ a.soundcloud
   border-radius: 5px;
   padding: 10px
   ul
-    width: 3100px
+    width: 100000px
     margin: 0
     padding: 0
+    padding-right: 10px
   li
     display: inline
     width: 300px

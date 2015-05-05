@@ -27,6 +27,7 @@ template(name="roomList")
       if results
         each results
           .message
+            a.play Play ►
             label.username #{user.username}:
             span.content #{title}
             a.label.add-to-playlist + Add to playlist

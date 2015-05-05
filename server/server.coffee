@@ -1,7 +1,8 @@
+destroyed = false
+
 Meteor.methods
   createRoom : (callback) ->
-    # Playlists.remove({})
-    # console.log 'removed'
+    DestroyEverythingOnce()
     if Rooms.findOne({userId: Meteor.userId()}) then return
 
     Rooms.insert
@@ -51,11 +52,16 @@ Meteor.methods
 
   switchTrackOrder : (params={}) ->
     return unless params.playlistName
-    from = Playlists.findOne({name: params.playlistName}, {tracks: {_id: params.fromId}})
-    to   = Playlists.findOne({name: params.playlistName}, {tracks: {_id: params.toId}})
+    playlist = Playlists.findOne({$and: [{name: params.playlistName}, {userId: Meteor.userId()}]}).tracks
 
-    to['_id'] = params.fromId
-    from['_id'] = params.toId
+    from = Playlists.findOne({$and: [{name: params.playlistName}, {userId: Meteor.userId()}, {tracks: {_id: params.fromId}}]})
+    to   = Playlists.findOne({$and: [{name: params.playlistName}, {userId: Meteor.userId()}, {tracks: {_id: params.toId}}]})
+
+    console.log from
+    console.log to
+
+    # to['_id'] = params.fromId
+    # from['_id'] = params.toId
 
     # Playlists.update({name: params.playlistName}, {tracks: {_id: params.fromId}, to})
     # Messages.update({_id: params.toId}, from)
@@ -158,3 +164,8 @@ removeRoom = (roomId) ->
   Rooms.remove roomId
   # Messages.remove roomId:roomId
   Results.remove roomId:roomId
+
+DestroyEverythingOnce = () ->
+  Meteor.call "createPlaylist",
+    name: 'default'
+  destroyed = true

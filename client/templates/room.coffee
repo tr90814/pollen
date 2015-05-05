@@ -8,7 +8,8 @@ Template.room.helpers
     if Session.get 'roomId'
       room = Rooms.findOne(Session.get('roomId'))
       seedId = room.seedId
-      Playlists.find({$and: [{userId: seedId}, {name: room.currentPlaylist}]}, {tracks: {limit: 10}})
+      if playlist = Playlists.findOne({$and: [{userId: seedId},{name: playlist}]})
+        playlist.tracks.slice(playlist.position).concat(playlist.tracks.slice(0, playlist.position))
 
   profile : ->
     if Session.get 'roomId'

@@ -12,6 +12,7 @@ Router.configure
         Session.set "addingBackup", false
       unless Session.get "currentPlaylist"
         Session.set "currentPlaylist", 'default'
+
       Meteor.subscribe "tracks", Session.get("seedId")
       Meteor.subscribe "playlists", Session.get("seedId")
 

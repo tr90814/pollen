@@ -25,21 +25,18 @@ Template.roomList.events
     $query = $("[data-value=search]")
     if $query.val() is "" then return
 
-    SC.get '/tracks', { q: $query.val() }, (tracks) ->
-      if (typeof(tracks) == 'object')
-        Meteor.call "removeOldResults", Meteor.userId()
-        for track in tracks
-          if track.streamable && track.sharing == "public"
-            Meteor.call "createResult",
-              roomId : Session.get "roomId"
-              track : track
+    SCSearch($query.val())
 
     $query.val ""
 
-  "click .message" : () ->
+  "click .play" : () ->
     Meteor.call "addTrack",
       track: this
       playlistName: Session.get 'currentPlaylist'
+
+  "click .message .username" : () ->
+    $query = $(event.target).html()
+    SCSearch($query)
 
   "click .add-to-playlist" : () ->
     popup = $('.playlist-selection')
@@ -60,3 +57,13 @@ Template.roomList.events
 
   "click .playlist-selection .cancel" : () ->
     $('.playlist-selection').addClass('hidden')
+
+SCSearch = (query) ->
+  SC.get '/tracks', { q: query }, (tracks) ->
+    if (typeof(tracks) == 'object')
+      Meteor.call "removeOldResults", Meteor.userId()
+      for track in tracks
+        if track.streamable && track.sharing == "public"
+          Meteor.call "createResult",
+            roomId : Session.get "roomId"
+            track : track
