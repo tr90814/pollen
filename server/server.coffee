@@ -1,6 +1,7 @@
 Meteor.methods
   createRoom : (callback) ->
-    # Rooms.remove({})
+    # Playlists.remove({})
+    # Results.remove({})
     if Rooms.findOne({userId: Meteor.userId()}) then return
 
     Rooms.insert
