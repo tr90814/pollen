@@ -24,7 +24,7 @@ Template.layout.helpers
     return if Session.get('currentSound') == true
     currentPlaylist = Session.get 'currentPlaylist'
     seedId = Session.get 'seedId'
-    playlist        = Playlists.findOne({$and: [{userId: seedId},{name: currentPlaylist}]})
+    playlist = Playlists.findOne({$and: [{userId: seedId},{name: currentPlaylist}]})
 
     if playlist && playlist.tracks
       if track = playlist.tracks[playlist.position]
@@ -105,8 +105,12 @@ stopTrack = () ->
   Meteor.call 'setCurrentTrack', undefined
 
 backToOwnQueue = () ->
+  stopTrack()
+  Session.set 'currentPlaylist', 'defualt'
   Meteor.call "changeSeed", Meteor.userId()
   Session.set "seedId", Meteor.userId()
+  Meteor.call "setCurrentPlaylist",
+    playlistName: 'default'
 
 # Misc helpers
 

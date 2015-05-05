@@ -55,11 +55,14 @@ Template.room.events =
   "click .play-playlist" : () ->
     name = $(event.toElement).parents('.playlist').data('name')
     Session.set 'currentPlaylist', name
+    Meteor.call 'setCurrentPlaylist',
+      playlistName: name
 
   "click .back-to-queue" : () ->
     seedId          = Session.get('seedId')
     currentPlaylist = Session.get('currentPlaylist')
     hasTracks       = Playlists.find({$and: [{userId: seedId},{name: currentPlaylist}]}).count()
+
     if Session.get('currentSound') && hasTracks
       soundManager.stop(Session.get('currentSound').sID)
 
@@ -67,10 +70,13 @@ Template.room.events =
     Session.set 'currentSound', undefined
     Session.set 'currentSoundId', undefined
     Meteor.call 'setCurrentTrack', undefined
+    Meteor.call 'setCurrentPlaylist',
+      playlistName: 'default'
 
   "click .switch-on" : () ->
     if Session.get 'roomId'
       Meteor.call "changeSeed", Rooms.findOne(Session.get('roomId')).userId
+      Session.set("currentPlaylist", Rooms.findOne(Session.get('roomId')).currentPlaylist)
       Session.set("seedId", Rooms.findOne(Session.get('roomId')).seedId)
 
   "click .switch-off" : () ->

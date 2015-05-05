@@ -1,10 +1,7 @@
-destroyed = false
-
 Meteor.methods
   createRoom : (callback) ->
-    DestroyEverythingOnce()
+    # Rooms.remove({})
     if Rooms.findOne({userId: Meteor.userId()}) then return
-
     Rooms.insert
       userId : Meteor.userId()
       username : Meteor.user().username
@@ -18,6 +15,10 @@ Meteor.methods
 
     Meteor.call "createPlaylist",
       name: 'default'
+
+  setCurrentPlaylist : (params={}) ->
+    return unless params.playlistName
+    Rooms.update({userId: Meteor.userId()}, {$set: {currentPlaylist: params.playlistName}})
 
   editDescription : (params={}) ->
     return if params.description.length > 100
@@ -165,7 +166,3 @@ removeRoom = (roomId) ->
   # Messages.remove roomId:roomId
   Results.remove roomId:roomId
 
-DestroyEverythingOnce = () ->
-  Meteor.call "createPlaylist",
-    name: 'default'
-  destroyed = true

@@ -6,7 +6,10 @@ template(name="roomList")
   if rooms.count
     .list-group
       each rooms
-        a.list-group-item(href="/room/#{_id}" title=name data-id=_id) #{username}
+        .list-group-item
+          a.listen Listen ►
+          a(href="/room/#{_id}").room-link
+            label #{username}
           if currentTrack
             span.current-track - #{currentTrack}
           else
