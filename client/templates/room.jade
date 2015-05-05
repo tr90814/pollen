@@ -50,7 +50,7 @@ template(name="room")
           li.playlist.item(data-name="#{this.name}")
             label name: #{this.name}
             if playlistState
-              input.btn.btn-default.play-playlist(value="Listen to this playlist")
+              a.play-playlist Listen to this playlist
             .queue
               ul
                 each tracks
