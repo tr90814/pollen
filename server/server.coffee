@@ -184,4 +184,3 @@ checkIsValidRoom = (roomId) ->
 removeRoom = (roomId) ->
   Rooms.remove roomId
   Results.remove roomId:roomId
-

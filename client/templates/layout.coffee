@@ -44,13 +44,8 @@ Template.layout.helpers
             onplay: -> onPlay(this, track)
             onload: -> setPosition(track, this)
             whileplaying: -> timer(this)
-          # getTrackInfo(track.trackId)
 
         [track]
-
-    # else if backups = Session.get 'backupTracks'
-    #   return if Session.get 'addingBackup' || Session.get('backupTracks').length == 0
-    #   Meteor.call "useBackup"
 
     else if Session.get "currentSound"
       stopTrack()
@@ -129,8 +124,6 @@ changeSlider = () ->
   safety = setTimeout(()->
     sound = Session.get('currentSound')
     position = $('.progress').val()*sound.durationEstimate/100
-    # soundManager.setPosition(sound.sID, position)
-    # Meteor.call "setVirtualTimeStamp", sound._id, new Date(new Date().getTime() - position)
   , 20)
 
 timer = (sound) ->
@@ -190,38 +183,3 @@ drop = (e) ->
     toIndex: draggedTo.index()
     fromId: draggedFrom.attr('data-id')
     toId: draggedTo.attr('data-id')
-
-# backup Radio style
-
-# getTrackInfo = (trackID) ->
-#   if Backups.find().count() < 10
-#     SC.get("/tracks/" + trackID + "/favoriters", (array) ->
-#       favoriters = []
-#       for entry in array
-#         if entry.playlist_count > 0
-#           favoriters.push([entry.id, entry.playlist_count])
-#       prepareBackup(favoriters)
-#     )
-
-# prepareBackup = (favoriters) ->
-#   for favoriter in favoriters
-#     if favoriter[1] > 0
-#       getAndFindPlaylist(favoriter)
-#       return
-
-# getAndFindPlaylist = (favoriter) ->
-#   SC.get("/users/" + favoriter + "/playlists", (array) ->
-#     for track in array.slice(0,10)
-#       SC.get '/tracks/' + track.id, (track) ->
-#         return unless track
-#         return if !track.streamable || track.sharing != 'public'
-#         Meteor.call "createBackup",
-#           track:
-#             trackId : track.id
-#             artwork_url: track.artwork_url
-#             description: track.description
-#             genre: track.genre
-#             title: track.title
-#             user: track.user
-#             duration: track.duration
-#       )
