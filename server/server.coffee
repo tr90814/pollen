@@ -47,7 +47,7 @@ Meteor.methods
       $addToSet: {
         tracks: {
           _id: new Meteor.Collection.ObjectID()._str
-          index : count + 1
+          index : count
           username : Meteor.user().username
           userId : Meteor.userId()
           playlistName : params.playlistName
