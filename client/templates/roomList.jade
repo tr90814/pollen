@@ -29,5 +29,13 @@ template(name="roomList")
           .message
             label.username #{user.username}:
             span.content #{title}
+            a.label.add-to-playlist + Add to playlist
     else
       .message No search results
+
+  .playlist-selection.hidden.well
+    h4 Select a playlist to add the track to:
+    input.btn.btn-default.first(type="submit" value="Current playlist" data-name="current")
+    each playlists
+      input.btn.btn-default(type="submit" value="#{this.name}" data-name="#{this.name}")
+    span.cancel Cancel

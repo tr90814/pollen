@@ -31,6 +31,41 @@ a.soundcloud
     background-color: #ddd
   .message:active
     border-color: rgb(164,211,162)
+  .add-to-playlist
+    float: right
+    color: black
+  .add-to-playlist:hover
+    color: rgb(164,211,162)
+
+.playlist-selection
+  position: fixed
+  margin-left: -200px
+  margin-top: -100px
+  width: 400px
+  text-align: center
+  top: 50%
+  left: 50%
+  z-index: 2
+  background: #eee
+  input,
+  .cancel
+    position: relative
+    z-index: 2
+    cursor: pointer
+    background #eee
+  h4
+    color: black
+
+.playlist-selection:before
+  content: ''
+  background: #fff
+  opacity: .5
+  top: 0
+  position: fixed
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 1
 
 .jumbotron
   padding-bottom: 260px
@@ -107,6 +142,11 @@ a.soundcloud
     clear: both
   .well
     overflow: hidden
+#playlists
+  ul
+    padding: 0
+  .playlist
+    list-style-type: none
 
 .queue
   margin-top: 10px

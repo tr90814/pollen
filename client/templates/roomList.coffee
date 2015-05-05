@@ -16,6 +16,9 @@ Template.roomList.helpers
     if Results.find({userId: Meteor.userId()}).count()
       Results.find {userId: Meteor.userId()}
 
+  playlists: ->
+    Playlists.find({},{name: {$ne: Session.get('currentPlaylist')}})
+
 Template.roomList.events
   "submit [data-action=search]" : (event, template) ->
     event.preventDefault()
@@ -26,12 +29,34 @@ Template.roomList.events
       if (typeof(tracks) == 'object')
         Meteor.call "removeOldResults", Meteor.userId()
         for track in tracks
-          Meteor.call "createResult",
-            roomId : Session.get "roomId"
-            track : track
+          if track.streamable && track.sharing == "public"
+            Meteor.call "createResult",
+              roomId : Session.get "roomId"
+              track : track
 
     $query.val ""
 
   "click .message" : () ->
-    Meteor.call "createMessage",
+    Meteor.call "addTrack",
       track: this
+      playlistName: Session.get 'currentPlaylist'
+
+  "click .add-to-playlist" : () ->
+    popup = $('.playlist-selection')
+
+    popup.data('track', this)
+    popup.removeClass('hidden')
+
+  "click .playlist-selection input" : () ->
+    container = $('.playlist-selection')
+    container.addClass('hidden')
+    name = $(event.toElement).data('name')
+    if name == 'current'
+      Session.get 'currentPlaylist'
+
+    Meteor.call "addTrack",
+      playlistName: name
+      track: container.data('track')
+
+  "click .playlist-selection .cancel" : () ->
+    $('.playlist-selection').addClass('hidden')

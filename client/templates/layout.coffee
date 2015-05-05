@@ -15,29 +15,42 @@ Template.layout.helpers
     this._id
 
   queued: ->
-    Messages.find({userId: getSeedId()}, {limit: 10})
+    playlist  = Session.get('currentPlaylist')
+    seedId    = Session.get('seedId')
+    if playlist = Playlists.findOne({$and: [{userId: seedId},{name: playlist}]})
+      playlist.tracks.slice(0,10)
 
   message : ->
     return if Session.get('currentSound') == true
-    if track = Messages.find({userId: getSeedId()}).fetch()[0]
-      noTrackPlaying       = !Session.get('currentSound')
-      nextTrackIsDifferent = Session.get('currentSoundId') != track.trackId
+    currentPlaylist = Session.get 'currentPlaylist'
+    seedId = Session.get 'seedId'
+    playlist        = Playlists.findOne({$and: [{userId: seedId},{name: currentPlaylist}]})
 
-      if noTrackPlaying || nextTrackIsDifferent
-        if Session.get('currentSound')
-          stopTrack()
-        else
-          Session.set 'currentSound', true
-        SC.stream "/tracks/" + track.trackId,
-          useHTML5Audio: true
-          preferFlash: false
-          autoPlay: true
-          onfinish: -> nextTrack()
-          onplay: -> onPlay(this, track)
-          onload: -> setPosition(track, this)
-          whileplaying: -> timer(this)
+    if playlist && playlist.tracks
+      if track = playlist.tracks[playlist.position]
+        noTrackPlaying       = !Session.get('currentSound')
+        nextTrackIsDifferent = Session.get('currentSoundId') != track.trackId
 
-      [track]
+        if noTrackPlaying || nextTrackIsDifferent
+          if Session.get('currentSound')
+            stopTrack()
+          else
+            Session.set 'currentSound', true
+          SC.stream "/tracks/" + track.trackId,
+            useHTML5Audio: true
+            preferFlash: false
+            autoPlay: true
+            onfinish: -> nextTrack()
+            onplay: -> onPlay(this, track)
+            onload: -> setPosition(track, this)
+            whileplaying: -> timer(this)
+          # getTrackInfo(track.trackId)
+
+        [track]
+
+    # else if backups = Session.get 'backupTracks'
+    #   return if Session.get 'addingBackup' || Session.get('backupTracks').length == 0
+    #   Meteor.call "useBackup"
 
     else if Session.get "currentSound"
       stopTrack()
@@ -61,8 +74,6 @@ onPlay = (sound, track) ->
   Meteor.call 'setCurrentTrack',
     title: track.title
     artist: track.user.username
-  # if track.userId == Meteor.userId()
-  #   Meteor.call 'setVirtualTimeStamp', track._id, new Date()
   setNewTrack(track, sound)
   $('.progress').val(0)
 
@@ -73,24 +84,21 @@ togglePause = (bool) ->
 
 nextTrack = () ->
   stopTrack()
-  Meteor.call 'removeOldestTrack'
+  Meteor.call 'incrementPlaylist',
+    Session.get 'currentPlaylist'
 
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
   if obj.readyState == 2
-    Meteor.call 'removeOldestTrack'
-    return
-
-# setPosition = (track, obj) ->
-#   if track.virtualTimeStamp && track.userId != Meteor.userId()
-#     position     = new Date() - track.virtualTimeStamp
-#     currentSound = Session.get('currentSound')
-#     soundManager.setPosition(currentSound.sID, position)
-#   setNewTrack(track, obj)
+    Meteor.call 'incrementPlaylist',
+      Session.get 'currentPlaylist'
 
 stopTrack = () ->
-  if Session.get('currentSound') && Messages.find().count()
+  seedId          = Session.get('seedId')
+  currentPlaylist = Session.get('currentPlaylist')
+  hasTracks       = Playlists.find({$and: [{userId: seedId},{name: currentPlaylist}]}).count()
+  if Session.get('currentSound') && hasTracks
     soundManager.stop(Session.get('currentSound').sID)
   Session.set "currentSound", undefined
   Session.set "currentSoundId", undefined
@@ -176,3 +184,38 @@ drop = (e) ->
     fromId: draggedFrom.attr('data-id'),
     toId: draggedTo.attr('data-id')
   })
+
+# backup Radio style
+
+# getTrackInfo = (trackID) ->
+#   if Backups.find().count() < 10
+#     SC.get("/tracks/" + trackID + "/favoriters", (array) ->
+#       favoriters = []
+#       for entry in array
+#         if entry.playlist_count > 0
+#           favoriters.push([entry.id, entry.playlist_count])
+#       prepareBackup(favoriters)
+#     )
+
+# prepareBackup = (favoriters) ->
+#   for favoriter in favoriters
+#     if favoriter[1] > 0
+#       getAndFindPlaylist(favoriter)
+#       return
+
+# getAndFindPlaylist = (favoriter) ->
+#   SC.get("/users/" + favoriter + "/playlists", (array) ->
+#     for track in array.slice(0,10)
+#       SC.get '/tracks/' + track.id, (track) ->
+#         return unless track
+#         return if !track.streamable || track.sharing != 'public'
+#         Meteor.call "createBackup",
+#           track:
+#             trackId : track.id
+#             artwork_url: track.artwork_url
+#             description: track.description
+#             genre: track.genre
+#             title: track.title
+#             user: track.user
+#             duration: track.duration
+#       )

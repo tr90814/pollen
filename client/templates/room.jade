@@ -42,3 +42,26 @@ template(name="room")
           input.btn.btn-default.switch-on(value="Listen to user")
         else
           input.btn.btn-default.switch-off(value="Go back to own queue")
+
+    h4 Playlists
+    #playlists.well
+      ul
+        each playlists
+          li.playlist.item(data-name="#{this.name}")
+            label name: #{this.name}
+            if playlistState
+              input.btn.btn-default.play-playlist(value="Listen to this playlist")
+            .queue
+              ul
+                each tracks
+                  li.item
+                    span.artwork
+                      img(src="#{artwork_url}")
+                    span.title #{title}
+                    span.user #{user.username}rack
+      form.input-group(data-action="create-playlist")
+        input.form-control.search-input(data-value="new-playlist" placeholder="Make a playlist")
+        span.input-group-btn
+          input.btn.btn-default(type="submit" value="Create")
+
+
