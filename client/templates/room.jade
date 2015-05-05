@@ -53,12 +53,14 @@ template(name="room")
               label name: #{this.name}
               if playlistState
                 a.play-playlist Listen to this playlist
+              a.red.delete-playlist.pull-right Delete
               .queue
                 ul
                   each tracks
                     li.item
                       span.artwork
                         img(src="#{artwork_url}")
+                      a.remove-track Remove
                       span.title #{title}
                       span.user #{user.username}rack
         form.input-group(data-action="create-playlist")

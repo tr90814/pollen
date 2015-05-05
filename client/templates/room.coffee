@@ -38,12 +38,23 @@ Template.room.helpers
     Session.get('currentPlaylist') != this.name
 
 Template.room.events =
+  "click .delete-playlist" : () ->
+    Meteor.call 'removePlaylist',
+      playlistName : this.name
+
+  "click .remove-track" : () ->
+    return unless this.playlistName
+    Meteor.call 'removeTrackFromPlaylist',
+      playlistName : this.playlistName
+      trackId : this.trackId
+
   "click .queue li" : () ->
     Meteor.call "addTrack",
       track: this
       playlistName: Session.get 'currentPlaylist'
 
   "submit [data-action=create-playlist]" : (event) ->
+    debugger
     event.preventDefault()
     $input = $("[data-value=new-playlist]")
     if $input.val() is "" then return

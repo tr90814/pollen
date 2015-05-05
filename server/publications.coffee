@@ -5,10 +5,6 @@ Meteor.publish "roomUsers",     (username) ->   UserPresences.data
 Meteor.publish "tracks",        (roomId) ->     return findTracks(Rooms.findOne({userId: roomId}).userId)
 Meteor.publish "playlists",     (roomUserId) -> return playlistsByRoom(roomUserId, this.userId)
 
-# Messages.allow({
-#   remove: -> return true
-# })
-
 findTracks = (userId) ->
   room   = Rooms.findOne({userId: userId})
   seedId = room.seedId

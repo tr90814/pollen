@@ -13,6 +13,9 @@
 a
   cursor: pointer
 
+input.btn-default
+  z-index: 0
+
 a.soundcloud
   background-image: url("https://developers.soundcloud.com/assets/powered_by_large_white-de881ecad8561c2131e7676fa9e92738.png")
   float: right;
@@ -164,11 +167,24 @@ a.soundcloud
   ul
     padding: 0
     li
+      position: relative
       padding: 0 0 20px 0
       .play-playlist
         cursor: pointer
+      .remove-track
+        color: #d9534f
+        position: absolute
+        bottom: 5px
+        right: 5px
+        font-size: 11px
+      .remove-track:hover
+        color: rgb(208, 59, 59)
   .playlist
     list-style-type: none
+  .delete-playlist
+    color: #d9534f
+  .delete-playlist:hover
+    color: rgb(208, 59, 59)
 
 .queue
   margin-top: 10px

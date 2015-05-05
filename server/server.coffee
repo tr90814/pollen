@@ -2,6 +2,7 @@ Meteor.methods
   createRoom : (callback) ->
     # Rooms.remove({})
     if Rooms.findOne({userId: Meteor.userId()}) then return
+
     Rooms.insert
       userId : Meteor.userId()
       username : Meteor.user().username
@@ -39,6 +40,7 @@ Meteor.methods
           _id: new Meteor.Collection.ObjectID()._str
           username : Meteor.user().username
           userId : Meteor.userId()
+          playlistName : params.playlistName
           trackId : params.track.trackId
           artwork_url : params.track.artwork_url
           description : params.track.description
@@ -88,13 +90,14 @@ Meteor.methods
       position = if playlist.position < playlist.tracks.length - 1 then playlist.position + 1 else 0
       Playlists.update({$and: [{userId: Meteor.userId()},{name: name}]}, {$set: {position: position}})
 
-  removePlaylist : (name) ->
-    Playlists.remove({name: name})
+  removePlaylist : (params={}) ->
+    return unless params.playlistName
+    Playlists.remove({$and: [{name: params.playlistName}, {userId: Meteor.userId()}]})
 
   removeTrackFromPlaylist : (params) ->
-    return unless params.name && params.trackId
-    return unless Playlists.find({name: params.name}).count()
-    Playlists.update({name: params.name}, {$pull: {tracks: {trackId: params.trackId}}})
+    return unless params.playlistName && params.trackId
+    return unless Playlists.find({name: params.playlistName}).count()
+    Playlists.update({name: params.playlistName}, {$pull: {tracks: {trackId: params.trackId}}})
 
   createResult : (params={}) ->
     return unless params
