@@ -6,15 +6,11 @@ Router.configure
     if Meteor.userId()
       unless Session.get "seedId"
         Session.set "seedId", Meteor.userId()
-      unless Session.get "backupTracks"
-        Session.set "backupTracks", []
-      unless Session.get "addingBackup"
-        Session.set "addingBackup", false
       unless Session.get "currentPlaylist"
         Session.set "currentPlaylist", 'default'
 
-      Meteor.subscribe "tracks", Session.get("seedId")
-      Meteor.subscribe "playlists", Session.get("seedId")
+      Meteor.subscribe "playerPlaylists", Session.get("seedId")
+      Meteor.subscribe "activeRooms"
 
 # Define page routes.
 Router.map ->
@@ -26,7 +22,6 @@ Router.map ->
       template : "roomList"
       waitOn : ->
         Meteor.subscribe "searchResults", Meteor.username
-        Meteor.subscribe "activeRooms"
       action : ->
         Session.set "roomId", null
         Session.set "roomUserId", null
@@ -38,18 +33,17 @@ Router.map ->
       # See, server/publications.coffee for publication setup.
       waitOn : ->
         Meteor.subscribe "allRooms"
-        if Session.get "roomUserId"
-          Meteor.subscribe "tracks", Session.get('roomUserId')
 
       # When navigating to a room we want to call joinRoom so the server can handle it.
       # Then, we set the session roomId. This will reactivley update user presence data.
       action : ->
-          Session.set "userName", Meteor.user().username
-          Session.set "roomId", @.params._id
-          Session.set "roomUserId", Rooms.findOne(@.params._id).userId
-          Meteor.call "createRoom", @.params._id, Meteor.user().username
+        Session.set "userName", Meteor.user().username
+        Session.set "roomId", @.params._id
+        Session.set "roomUserId", Rooms.findOne(@.params._id).userId
+        Meteor.call "createRoom", @.params._id, Meteor.user().username
+        Meteor.subscribe "roomPlaylists", Session.get('roomUserId')
 
-          @.render()
+        @.render()
       # Remove user from the list of users on unload
       unload : ->
         Meteor.call "changeSeed", Meteor.userId()

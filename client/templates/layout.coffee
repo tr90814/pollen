@@ -15,16 +15,19 @@ Template.layout.helpers
     this._id
 
   queued: ->
-    playlist  = Session.get('currentPlaylist')
-    seedId    = Session.get('seedId')
-    if playlist = Playlists.findOne({$and: [{userId: seedId},{name: playlist}]})
-      playlist.tracks.slice(playlist.position).concat(playlist.tracks.slice(0, playlist.position))
+    seedId = Session.get('seedId')
+    if room = Rooms.findOne({userId: seedId})
+      if currentPlaylist = room.currentPlaylist
+        playlist = Playlists.findOne({$and: [{userId: seedId},{name: currentPlaylist}]})
+        playlist.tracks.slice(playlist.position).concat(playlist.tracks.slice(0, playlist.position))
 
   message : ->
     return if Session.get('currentSound') == true
-    currentPlaylist = Session.get 'currentPlaylist'
+
     seedId = Session.get 'seedId'
-    playlist = Playlists.findOne({$and: [{userId: seedId},{name: currentPlaylist}]})
+    if room = Rooms.findOne({userId: seedId})
+      currentPlaylist = room.currentPlaylist
+      playlist = Playlists.findOne({$and: [{userId: seedId},{name: currentPlaylist}]})
 
     if playlist && playlist.tracks
       if track = playlist.tracks[playlist.position]
@@ -166,6 +169,8 @@ dragLeave = (e) ->
 drop = (e) ->
   ul = getItem(e).parents('ul')
   ul.find('li').removeClass('dragged-over')
+  e.preventDefault()
+
   draggedFrom       = ul.find('.dragged')
   draggedTo         = getItem(e)
   draggedFromImg    = draggedFrom.children().clone()
@@ -174,8 +179,8 @@ drop = (e) ->
   if draggedFrom.attr('draggable') == true
     draggedFrom.html(draggedToImg)
     draggedTo.html(draggedFromImg)
+
   ul.find('.dragged').removeClass('dragged')
-  e.preventDefault()
 
   Meteor.call 'switchTrackOrder',
     playlistName: Session.get 'currentPlaylist'

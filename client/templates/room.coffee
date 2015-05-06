@@ -76,12 +76,15 @@ Template.room.events =
     Session.set 'currentPlaylist', name
     Meteor.call 'setCurrentPlaylist',
       playlistName: name
+    stopTrack()
 
   "click .switch-on" : () ->
     if Session.get 'roomId'
-      Meteor.call "changeSeed", Rooms.findOne(Session.get('roomId')).userId
-      Session.set("currentPlaylist", Rooms.findOne(Session.get('roomId')).currentPlaylist)
-      Session.set("seedId", Rooms.findOne(Session.get('roomId')).seedId)
+      seedRoom = Rooms.findOne(Session.get('roomId'))
+      Meteor.call "changeSeed", seedRoom.userId
+      Meteor.call "setCurrentPlaylist", playlistName: seedRoom.currentPlaylist
+      Session.set("currentPlaylist", seedRoom.currentPlaylist)
+      Session.set("seedId", seedRoom.seedId)
 
   "click .edit-description" : () ->
     $('.edit-description').addClass('hidden')
@@ -96,3 +99,12 @@ Template.room.events =
     $('.form-group').addClass('hidden')
 
     return false
+
+stopTrack = () ->
+  seedId          = Session.get('seedId')
+  currentPlaylist = Session.get('currentPlaylist')
+  hasTracks       = Playlists.find({$and: [{userId: seedId},{name: currentPlaylist}]}).count()
+  if Session.get('currentSound') && hasTracks
+    soundManager.stop(Session.get('currentSound').sID)
+  Session.set "currentSound", undefined
+  Session.set "currentSoundId", undefined

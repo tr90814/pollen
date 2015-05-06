@@ -101,6 +101,7 @@ Meteor.methods
   incrementPlaylist : (name) ->
     return unless name
     if name == 'default'
+      console.log Playlists.find({$and: [{userId: Meteor.userId()},{name: name}]}).count()
       if Playlists.find({$and: [{userId: Meteor.userId()},{name: name}]}).count()
         Playlists.update({$and: [{userId: Meteor.userId()},{name: name}]}, {$pop: {tracks: -1}})
     else

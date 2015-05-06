@@ -1,40 +1,33 @@
-Meteor.publish "allRooms",      () ->           Rooms.find()
-Meteor.publish "activeRooms",   () ->           Rooms.find({$or: [{currentTrack: {$ne: undefined}}, {userId: this.userId}]})
-Meteor.publish "searchResults", (username) ->   Results.find "data.username" : username
-Meteor.publish "roomUsers",     (username) ->   UserPresences.data
-Meteor.publish "tracks",        (roomId) ->     return findTracks(Rooms.findOne({userId: roomId}).userId)
-Meteor.publish "playlists",     (roomUserId) -> return playlistsByRoom(roomUserId, this.userId)
+Meteor.publish "allRooms",        () ->           Rooms.find()
+Meteor.publish "activeRooms",     () ->           Rooms.find({$or: [{currentTrack: {$ne: undefined}}, {userId: this.userId}]})
+Meteor.publish "searchResults",   (username) ->   Results.find "data.username" : username
+Meteor.publish "roomUsers",       (username) ->   UserPresences.data
+Meteor.publish "roomPlaylists",   (roomUserId) -> return roomPlaylists(roomUserId)
+Meteor.publish "playerPlaylists", (userId) ->     return playerPlaylists(userId, this.userId)
 
-findTracks = (userId) ->
-  room   = Rooms.findOne({userId: userId})
+roomPlaylists = (roomUserId) ->
+  room   = Rooms.findOne({userId: roomUserId})
   seedId = room.seedId
-  if seedId == userId
-    return Playlists.find({$and: [{userId : userId}, {name: room.currentPlaylist}]})
-  findTracks(seedId)
+  if seedId == roomUserId
+    return Playlists.find({$and: [{userId : roomUserId}, {name: room.currentPlaylist}]})
+  roomPlaylists(seedId)
 
-playlistsByRoom = (roomUserId, userId) ->
-  if userId == roomUserId
-    Playlists.find({userId: roomUserId})
+playerPlaylists = (userId, meteorId) ->
+  if userId == meteorId
+    Playlists.find({userId: meteorId})
   else
-    room = Rooms.findOne({userId: roomUserId})
-    Playlists.find({$and: [{userId: roomUserId}, {name: room.currentPlaylist}]})
+    seedLoop(userId)
 
+currentPlaylist = (userId, meteorId) ->
+  if userId == meteorId
+    Playlists.find({userId: meteorId})
 
-# Add animation to the slider to make it smooth
-# Playlists
-# DJ merge
-# search for users
-# paginate tracks
-# listener tree - know your sub leachers.  abor.js
-
-# loop/radio
-# artist search link
-# playlist.
-# search track - if someone else listening - show up
-# like sticking your head out of the window
-# its alive - not a filing cabinet
-# what are the metrics for tree ranking - how many followers/how long youve been on
-
+seedLoop = (userId) ->
+  room = Rooms.findOne({userId: userId})
+  if room.seedId == userId
+    Playlists.find({$and: [{userId: userId}, {name: room.currentPlaylist}]})
+  else
+    seedLoop(room.seedId)
 
 
 # SIMON WORDS TO MUM
