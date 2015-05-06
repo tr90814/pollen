@@ -16,7 +16,7 @@ Template.roomList.helpers
       Results.find {userId: Meteor.userId()}
 
   playlists: ->
-    Playlists.find({},{name: {$ne: Session.get('currentPlaylist')}})
+    Playlists.find({},{name: {$ne: 'default'}})
 
 Template.roomList.events
   "submit [data-action=search]" : (event, template) ->
@@ -31,7 +31,7 @@ Template.roomList.events
   "click .play" : () ->
     Meteor.call "addTrack",
       track: this
-      playlistName: Session.get 'currentPlaylist'
+      playlistName: 'default'
 
   "click .message .username" : (event) ->
     $query = $(event.target).html()

@@ -42,8 +42,6 @@ Template.room.helpers
 
 Template.room.events =
   "click .delete-playlist" : () ->
-    if Session.get('currentPlaylist') == this.name
-      Session.set 'currentPlaylist', 'default'
     Meteor.call 'removePlaylist',
       playlistName : this.name
     if this.name == 'default'
@@ -60,7 +58,7 @@ Template.room.events =
   "click .queue li" : () ->
     Meteor.call "addTrack",
       track: this
-      playlistName: Session.get 'currentPlaylist'
+      playlistName: 'default'
 
   "submit [data-action=create-playlist]" : (event) ->
     event.preventDefault()
@@ -73,17 +71,13 @@ Template.room.events =
 
   "click .play-playlist" : (event) ->
     name = $(event.toElement).parents('.playlist').data('name')
-    Session.set 'currentPlaylist', name
-    Meteor.call 'setCurrentPlaylist',
+    Meteor.call 'playPlaylist',
       playlistName: name
-    stopTrack()
 
   "click .switch-on" : () ->
     if Session.get 'roomId'
       seedRoom = Rooms.findOne(Session.get('roomId'))
       Meteor.call "changeSeed", seedRoom.userId
-      Meteor.call "setCurrentPlaylist", playlistName: seedRoom.currentPlaylist
-      Session.set("currentPlaylist", seedRoom.currentPlaylist)
       Session.set("seedId", seedRoom.seedId)
 
   "click .edit-description" : () ->
@@ -99,12 +93,3 @@ Template.room.events =
     $('.form-group').addClass('hidden')
 
     return false
-
-stopTrack = () ->
-  seedId          = Session.get('seedId')
-  currentPlaylist = Session.get('currentPlaylist')
-  hasTracks       = Playlists.find({$and: [{userId: seedId},{name: currentPlaylist}]}).count()
-  if Session.get('currentSound') && hasTracks
-    soundManager.stop(Session.get('currentSound').sID)
-  Session.set "currentSound", undefined
-  Session.set "currentSoundId", undefined

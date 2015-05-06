@@ -6,7 +6,8 @@ Meteor.publish "roomPlaylists",   (roomUserId) -> return roomPlaylists(roomUserI
 Meteor.publish "playerPlaylists", (userId) ->     return playerPlaylists(userId, this.userId)
 
 roomPlaylists = (roomUserId) ->
-  room   = Rooms.findOne({userId: roomUserId})
+  unless room = Rooms.findOne({userId: roomUserId})
+    return []
   seedId = room.seedId
   if seedId == roomUserId
     return Playlists.find({$and: [{userId : roomUserId}, {name: room.currentPlaylist}]})

@@ -2,14 +2,15 @@ Meteor.methods
   createRoom : (callback) ->
     # Playlists.remove({})
     # Results.remove({})
+    # Rooms.remove({})
     if Rooms.findOne({userId: Meteor.userId()}) then return
 
     Rooms.insert
       userId : Meteor.userId()
       username : Meteor.user().username
       seedId : Meteor.userId()
-      currentTrack : undefined
-      currentPlaylist : 'default'
+      # currentTrack : undefined
+      # currentPlaylist : 'default'
       profile:
         image: randomColour()
         description: undefined
@@ -28,6 +29,11 @@ Meteor.methods
       {$set: {currentPlaylist: params.playlistName}}
     )
 
+  playPlaylist : (params={}) ->
+    return unless params && params.playlistName
+    tracks = Playlists.findOne({$and: [{ name: params.playlistName }, {userId: Meteor.userId()}]}).tracks
+    Playlists.update({$and: [{ name: 'default' }, {userId: Meteor.userId()}]}, {$set: {tracks: tracks}})
+
   editDescription : (params={}) ->
     return if params.description.length > 100
     return if Meteor.userId() != params.userId
@@ -38,7 +44,7 @@ Meteor.methods
   addTrack : (params={}) ->
     return unless params && params.track && params.playlistName
     return unless params.track.trackId && params.track.user
-    unless Playlists.find({name: params.name}).count()
+    unless Playlists.find({name: params.playlistName}).count()
       Meteor.call 'createPlaylist', name: params.playlistName
 
     count = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}).tracks.length
@@ -89,25 +95,19 @@ Meteor.methods
 
   createPlaylist : (params={}) ->
     params['name'] = params.name || 'defualt'
-    return if Playlists.find({name: params.name}).count()
+    return if Playlists.find({$and: [{name: params.name}, {userId: Meteor.userId()}]}).count()
+
     Playlists.insert
       userId : Meteor.userId()
       username : Meteor.user().username
       name : params.name
       tracks : params.tracks || []
-      position: 0
+      # position: 0
       creation_date : new Date()
 
-  incrementPlaylist : (name) ->
-    return unless name
-    if name == 'default'
-      console.log Playlists.find({$and: [{userId: Meteor.userId()},{name: name}]}).count()
-      if Playlists.find({$and: [{userId: Meteor.userId()},{name: name}]}).count()
-        Playlists.update({$and: [{userId: Meteor.userId()},{name: name}]}, {$pop: {tracks: -1}})
-    else
-      playlist = Playlists.findOne({$and: [{userId: Meteor.userId()},{name: name}]})
-      position = if playlist.position < playlist.tracks.length - 1 then playlist.position + 1 else 0
-      Playlists.update({$and: [{userId: Meteor.userId()},{name: name}]}, {$set: {position: position}})
+  incrementPlaylist : () ->
+    if Playlists.find({$and: [{userId: Meteor.userId()}, {name: 'default'}]}).count()
+      Playlists.update({$and: [{userId: Meteor.userId()},{name: 'default'}]}, {$pop: {tracks: -1}})
 
   removePlaylist : (params={}) ->
     return unless params.playlistName
@@ -116,7 +116,7 @@ Meteor.methods
   removeTrackFromPlaylist : (params) ->
     return unless params.playlistName && params._id
     return unless Playlists.find({name: params.playlistName}).count()
-    Playlists.update({name: params.playlistName}, {$pull: {tracks: {_id: params._id}}})
+    Playlists.update({$and: [{name: params.playlistName}, {userId: Meteor.userId()}]}, {$pull: {tracks: {_id: params._id}}})
 
   createResult : (params={}) ->
     return unless params

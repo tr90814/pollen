@@ -16,18 +16,14 @@ Template.layout.helpers
 
   queued: ->
     seedId = Session.get('seedId')
-    if room = Rooms.findOne({userId: seedId})
-      if currentPlaylist = room.currentPlaylist
-        playlist = Playlists.findOne({$and: [{userId: seedId},{name: currentPlaylist}]})
-        playlist.tracks.slice(playlist.position).concat(playlist.tracks.slice(0, playlist.position))
+    if playlist = Playlists.findOne({$and: [{userId: seedId}, {name: 'default'}]})
+      playlist.tracks.slice(playlist.position).concat(playlist.tracks.slice(0, playlist.position))
 
   message : ->
     return if Session.get('currentSound') == true
 
     seedId = Session.get 'seedId'
-    if room = Rooms.findOne({userId: seedId})
-      currentPlaylist = room.currentPlaylist
-      playlist = Playlists.findOne({$and: [{userId: seedId},{name: currentPlaylist}]})
+    playlist = Playlists.findOne({$and: [{userId: seedId},{name: 'default'}]})
 
     if playlist && playlist.tracks
       if track = playlist.tracks[playlist.position]
@@ -55,6 +51,7 @@ Template.layout.helpers
 
 Template.layout.events =
   "click .skip"             : ()  -> nextTrack()
+  "click .mute"             : ()  -> toggleMute()
   "click .pause"            : ()  -> togglePause(false)
   "click .play"             : ()  -> togglePause(true)
   "click .show-hide-queue"  : ()  -> toggleQueue()
@@ -67,6 +64,13 @@ Template.layout.events =
   "change .progress"        : ()  -> changeSlider()
 
 # Sound manipulation
+
+toggleMute = () ->
+  if soundManager
+    if soundManager.muted
+      soundManager.unmute()
+    else
+      soundManager.mute()
 
 onPlay = (sound, track) ->
   Meteor.call 'setCurrentTrack',
@@ -82,20 +86,17 @@ togglePause = (bool) ->
 
 nextTrack = () ->
   stopTrack()
-  Meteor.call 'incrementPlaylist',
-    Session.get 'currentPlaylist'
+  Meteor.call 'incrementPlaylist'
 
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
   if obj.readyState == 2
-    Meteor.call 'incrementPlaylist',
-      Session.get 'currentPlaylist'
+    Meteor.call 'incrementPlaylist'
 
 stopTrack = () ->
   seedId          = Session.get('seedId')
-  currentPlaylist = Session.get('currentPlaylist')
-  hasTracks       = Playlists.find({$and: [{userId: seedId},{name: currentPlaylist}]}).count()
+  hasTracks       = Playlists.find({$and: [{userId: seedId},{name: 'default'}]}).count()
   if Session.get('currentSound') && hasTracks
     soundManager.stop(Session.get('currentSound').sID)
   Session.set "currentSound", undefined
@@ -104,11 +105,8 @@ stopTrack = () ->
 
 backToOwnQueue = () ->
   stopTrack()
-  Session.set 'currentPlaylist', 'defualt'
   Meteor.call "changeSeed", Meteor.userId()
   Session.set "seedId", Meteor.userId()
-  Meteor.call "setCurrentPlaylist",
-    playlistName: 'default'
 
 # Misc helpers
 
@@ -183,7 +181,7 @@ drop = (e) ->
   ul.find('.dragged').removeClass('dragged')
 
   Meteor.call 'switchTrackOrder',
-    playlistName: Session.get 'currentPlaylist'
+    playlistName: 'default'
     fromIndex: draggedFrom.index()
     toIndex: draggedTo.index()
     fromId: draggedFrom.attr('data-id')
