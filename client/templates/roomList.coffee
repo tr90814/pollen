@@ -33,6 +33,11 @@ Template.roomList.events
       track: this
       playlistName: 'default'
 
+  "click .listen" : () ->
+    seedRoom = Rooms.findOne({userId: this.seedId})
+    Meteor.call "changeSeed", seedRoom.userId
+    Session.set("seedId", seedRoom.seedId)
+
   "click .message .username" : (event) ->
     $query = $(event.target).html()
     SCSearch($query)
