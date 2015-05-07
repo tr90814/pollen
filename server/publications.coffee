@@ -6,13 +6,13 @@ Meteor.publish "roomPlaylists",   (roomUserId) -> return roomPlaylists(roomUserI
 Meteor.publish "playerPlaylists", (userId) ->     return playerPlaylists(userId, this.userId)
 Meteor.publish "nodes",           (userId) ->     Rooms.find({seedId: userID})
 
-# roomPlaylists = (roomUserId) ->
-#   unless room = Rooms.findOne({userId: roomUserId})
-#     return []
-#   seedId = room.seedId
-#   if seedId == roomUserId
-#     return Playlists.find({$and: [{userId : roomUserId}, {name: room.currentPlaylist}]})
-#   roomPlaylists(seedId)
+roomPlaylists = (roomUserId) ->
+  unless room = Rooms.findOne({userId: roomUserId})
+    return []
+  seedId = room.seedId
+  if seedId == roomUserId
+    return Playlists.find({$and: [{userId : roomUserId}, {name: room.currentPlaylist}]})
+  roomPlaylists(seedId)
 
 playerPlaylists = (userId, meteorId) ->
   if userId == meteorId
@@ -20,9 +20,9 @@ playerPlaylists = (userId, meteorId) ->
   else
     seedLoop(userId, meteorId)
 
-# currentPlaylist = (userId, meteorId) ->
-#   if userId == meteorId
-#     Playlists.find({userId: meteorId})
+currentPlaylist = (userId, meteorId) ->
+  if userId == meteorId
+    Playlists.find({userId: meteorId})
 
 seedLoop = (userId, meteorId) ->
   room = Rooms.findOne({userId: userId})

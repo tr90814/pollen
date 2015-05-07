@@ -70,7 +70,7 @@ Meteor.methods
     })
 
   switchTrackOrder : (params={}) ->
-    return unless params.toIndex && params.fromIndex
+    return unless params.toId && params.fromId && params.playlistName
 
     Playlists.update(
       {$and: [{name: params.playlistName}, {userId: Meteor.userId()},  { 'tracks._id': params.toId}]},

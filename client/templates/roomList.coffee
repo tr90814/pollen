@@ -36,7 +36,7 @@ Template.roomList.events
   "click .listen" : () ->
     seedRoom = Rooms.findOne({userId: this.seedId})
     Meteor.call "changeSeed", seedRoom.userId
-    Session.set("seedId", seedRoom.seedId)
+    Session.set "seedId", seedRoom.seedId
 
   "click .message .username" : (event) ->
     $query = $(event.target).html()

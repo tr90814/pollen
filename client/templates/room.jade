@@ -65,7 +65,7 @@ template(name="room")
               .queue
                 ul
                   each tracks
-                    li(draggable="true", data-id="#{_id}").item
+                    li(draggable="true", data-id="#{_id}").item.track
                       span.artwork
                         img(src="#{artwork_url}")
                       a.remove-track Remove

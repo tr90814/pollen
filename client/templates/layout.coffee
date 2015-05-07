@@ -123,8 +123,9 @@ getSeedId = () ->
 
 changeSlider = () ->
   safety = setTimeout(()->
-    sound = Session.get('currentSound')
+    sound    = Session.get('currentSound')
     position = $('.progress').val()*sound.durationEstimate/100
+    soundManager.getSoundById(sound.sID).setPosition(position)
   , 20)
 
 timer = (sound) ->
@@ -145,9 +146,9 @@ timeFormat = (milliSeconds) ->
 # Drag Queue items
 
 getItem = (e) ->
-  if $(e.target).hasClass('item')
+  if $(e.target).hasClass('track')
     return $(e.target)
-  $(e.target).parents('.item')
+  $(e.target).parents('.track')
 
 dragStart = (e) ->
   getItem(e).addClass('dragged')
@@ -173,16 +174,22 @@ drop = (e) ->
   draggedTo         = getItem(e)
   draggedFromImg    = draggedFrom.children().clone()
   draggedToImg      = draggedTo.children()
+  playlistName      = ul.parents('.playlist').data('name') || 'default'
 
   if draggedFrom.attr('draggable') == true
     draggedFrom.html(draggedToImg)
     draggedTo.html(draggedFromImg)
 
-  ul.find('.dragged').removeClass('dragged')
+  draggedToIndex    = draggedTo.index()
+  draggedFromIndex  = draggedFrom.index()
+
+  return if draggedFromIndex == -1 || draggedToIndex == -1
 
   Meteor.call 'switchTrackOrder',
-    playlistName: 'default'
-    fromIndex: draggedFrom.index()
-    toIndex: draggedTo.index()
+    playlistName: playlistName
+    fromIndex: draggedFromIndex
+    toIndex: draggedToIndex
     fromId: draggedFrom.attr('data-id')
     toId: draggedTo.attr('data-id')
+
+  ul.find('.dragged').removeClass('dragged')

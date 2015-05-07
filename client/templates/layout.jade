@@ -37,7 +37,7 @@ template(name="layout")
       ul
         each queued
           if ownQueue
-            li(draggable="true", data-id="#{_id}").item
+            li(draggable="true", data-id="#{_id}" data-name="#{name}").item.track
               span.artwork
                 img(src="#{artwork_url}")
               span.title #{title}
