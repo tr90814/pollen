@@ -28,9 +28,8 @@ template(name="room")
       each node
         span(class='label node label-default #{state}') #{username}
 
-    h4 Tracks
-
     unless ownProfile
+      h4 Tracks
       #player.well
         if queued.count
           .queue
