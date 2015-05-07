@@ -18,15 +18,6 @@ template(name="room")
             textarea.form-control
             input.btn.default-btn(value="submit" type="submit")
 
-    h4 Tracks
-
-    label Who's listening to #{roomName}:
-    #users
-      //- Display users in the current room. Since all data is reactive, this will update live.
-      each roomUsers
-        //- Setting the state string in the classes will indicate, via css, if a user is online or idle!
-        span(class='label label-default #{state}') #{username}
-
     h4 Nodes:
 
     #nodes
@@ -36,6 +27,8 @@ template(name="room")
       label Children
       each node
         span(class='label node label-default #{state}') #{username}
+
+    h4 Tracks
 
     unless ownProfile
       #player.well
