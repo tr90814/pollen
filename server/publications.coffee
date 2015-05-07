@@ -4,6 +4,8 @@ Meteor.publish "searchResults",   (username) ->   Results.find "data.username" :
 Meteor.publish "roomUsers",       (username) ->   UserPresences.data
 Meteor.publish "roomPlaylists",   (roomUserId) -> return roomPlaylists(roomUserId)
 Meteor.publish "playerPlaylists", (userId) ->     return playerPlaylists(userId, this.userId)
+Meteor.publish "nodes",           (userId) ->     Rooms.find({seedId: userID})
+
 
 roomPlaylists = (roomUserId) ->
   unless room = Rooms.findOne({userId: roomUserId})

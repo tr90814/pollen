@@ -27,6 +27,16 @@ template(name="room")
         //- Setting the state string in the classes will indicate, via css, if a user is online or idle!
         span(class='label label-default #{state}') #{username}
 
+    h4 Nodes:
+
+    #nodes
+      label Parent
+      each parentNode
+        span(class='label parentNode label-default #{state}') #{username}
+      label Children
+      each node
+        span(class='label node label-default #{state}') #{username}
+
     unless ownProfile
       #player.well
         if queued.count

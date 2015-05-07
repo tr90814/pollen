@@ -33,6 +33,14 @@ Template.room.helpers
       roomsUserId = Rooms.findOne({_id: roomId}).userId
       Rooms.find({seedId: roomsUserId}).fetch()
 
+  parentNode : ->
+    if nodeId = Session.get 'nodeId'
+      Rooms.find({userId: nodeId}).fetch()
+
+  node : ->
+    if nodeId = Session.get 'nodeId'
+      Rooms.find({$and: [{seedId: nodeId}, {userId: {$ne: nodeId}}]}).fetch()
+
   switchState : ->
     if Session.get 'roomId'
       Rooms.findOne(Session.get('roomId')).seedId != Session.get("seedId")
@@ -41,6 +49,12 @@ Template.room.helpers
     Session.get('currentPlaylist') != this.name
 
 Template.room.events =
+  "click .node" : () ->
+    Session.set 'nodeId', this.userId
+
+  "click .parentNode" : () ->
+    Session.set 'nodeId', this.seedId
+
   "click .delete-playlist" : () ->
     Meteor.call 'removePlaylist',
       playlistName : this.name

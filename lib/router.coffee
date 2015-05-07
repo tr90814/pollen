@@ -41,6 +41,7 @@ Router.map ->
         Session.set "roomId", @.params._id
         if Rooms.findOne(@.params._id)
           Session.set "roomUserId", Rooms.findOne(@.params._id).userId
+          Session.set("nodeId", Session.get('roomUserId'))
         Meteor.call "createRoom", @.params._id, Meteor.user().username
         Meteor.subscribe "roomPlaylists", Session.get('roomUserId')
 
