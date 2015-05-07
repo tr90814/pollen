@@ -41,7 +41,7 @@ Template.layout.helpers
             autoPlay: true
             onfinish: -> nextTrack()
             onplay: -> onPlay(this, track)
-            onload: -> setPosition(track, this)
+            onload: -> updateSound(this)
             whileplaying: -> timer(this)
 
         [track]
@@ -107,6 +107,9 @@ backToOwnQueue = () ->
   stopTrack()
   Meteor.call "changeSeed", Meteor.userId()
   Session.set "seedId", Meteor.userId()
+
+updateSound = (sound) ->
+  Session.set "currentSound", sound
 
 # Misc helpers
 
