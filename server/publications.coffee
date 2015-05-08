@@ -20,10 +20,6 @@ playerPlaylists = (userId, meteorId) ->
   else
     seedLoop(userId, meteorId)
 
-currentPlaylist = (userId, meteorId) ->
-  if userId == meteorId
-    Playlists.find({userId: meteorId})
-
 seedLoop = (userId, meteorId) ->
   room = Rooms.findOne({userId: userId})
   if room.seedId == room.userId

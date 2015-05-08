@@ -15,15 +15,17 @@ Template.layout.helpers
     this._id
 
   queued: ->
-    seedId = Session.get('seedId')
-    if playlist = Playlists.findOne({$and: [{userId: seedId}, {name: 'default'}]})
-      return playlist.tracks
+    if Meteor.userId() != Session.get('seedId')
+      playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
+    else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'default'}]})
+    if playlist then return playlist.tracks
 
   message : ->
     return if Session.get('currentSound') == true
 
-    seedId = Session.get 'seedId'
-    playlist = Playlists.findOne({$and: [{userId: seedId},{name: 'default'}]})
+    if Meteor.userId() != Session.get('seedId')
+      playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
+    else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'default'}]})
 
     if playlist && playlist.tracks
       if track = playlist.tracks[0]
