@@ -17,7 +17,7 @@ Template.layout.helpers
   queued: ->
     seedId = Session.get('seedId')
     if playlist = Playlists.findOne({$and: [{userId: seedId}, {name: 'default'}]})
-      playlist.tracks.slice(playlist.position).concat(playlist.tracks.slice(0, playlist.position))
+      return playlist.tracks
 
   message : ->
     return if Session.get('currentSound') == true
@@ -26,7 +26,7 @@ Template.layout.helpers
     playlist = Playlists.findOne({$and: [{userId: seedId},{name: 'default'}]})
 
     if playlist && playlist.tracks
-      if track = playlist.tracks[playlist.position]
+      if track = playlist.tracks[0]
         noTrackPlaying       = !Session.get('currentSound')
         nextTrackIsDifferent = Session.get('currentSoundId') != track.trackId
 
