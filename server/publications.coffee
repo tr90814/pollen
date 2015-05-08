@@ -26,8 +26,8 @@ currentPlaylist = (userId, meteorId) ->
 
 seedLoop = (userId, meteorId) ->
   room = Rooms.findOne({userId: userId})
-  if room.seedId == userId
-    Playlists.find({$and: [{userId: userId}, {name: room.currentPlaylist}]})
+  if room.seedId == room.userId
+    Playlists.find({$and: [{userId: room.userId}, {name: 'default'}]})
   else if room.seedId == meteorId
     return
   else
