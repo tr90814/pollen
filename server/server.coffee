@@ -3,21 +3,20 @@ Meteor.methods
     # Playlists.remove({})
     # Results.remove({})
     # Rooms.remove({})
-    if Rooms.findOne({userId: Meteor.userId()}) then return
+    unless Rooms.findOne({userId: Meteor.userId()})
 
-    Rooms.insert
-      userId : Meteor.userId()
-      username : Meteor.user().username
-      seedId : Meteor.userId()
-      # currentTrack : undefined
-      # currentPlaylist : 'default'
-      profile:
-        image: randomColour()
-        description: undefined
-      creation_date : new Date()
+      Rooms.insert
+        userId : Meteor.userId()
+        username : Meteor.user().username
+        seedId : Meteor.userId()
+        # currentTrack : undefined
+        # currentPlaylist : 'default'
+        profile:
+          image: randomColour()
+          description: undefined
+        creation_date : new Date()
 
-    Meteor.call "createPlaylist",
-      name: 'default'
+    giveEveryoneADefault()
 
   setCurrentPlaylist : (params={}) ->
     return unless params.playlistName
@@ -105,6 +104,8 @@ Meteor.methods
       # position: 0
       creation_date : new Date()
 
+    console.log params.name
+
   incrementPlaylist : () ->
     if Playlists.find({$and: [{userId: Meteor.userId()}, {name: 'default'}]}).count()
       Playlists.update({$and: [{userId: Meteor.userId()},{name: 'default'}]}, {$pop: {tracks: -1}})
@@ -167,6 +168,13 @@ UserPresenceSettings
     #   , 1000
     # else
     Rooms.update roomId, $set: user_count:roomUsersCount
+
+giveEveryoneADefault = () ->
+  Rooms.find({}).forEach((doc)->
+    if !Playlists.find({$and: [{userId: doc.userId}, {name: 'default'}]}).count()
+      Meteor.call 'createPlaylist',
+        name: 'default'
+  )
 
 randomColour = () ->
   r = randomRGB()
