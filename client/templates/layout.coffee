@@ -5,6 +5,9 @@ Template.layout.helpers
   paused : ->
     Session.get('currentSound').paused
 
+  playlists: ->
+    Playlists.find({$and: [{userId: Meteor.userId()},{name: {$ne: 'default'}}]})
+
   ownQueue : ->
     this.userId == Meteor.userId()
 
@@ -64,6 +67,24 @@ Template.layout.events =
   "dragleave li"            : (e) -> dragLeave(e)
   "drop li"                 : (e) -> drop(e)
   "change .progress"        : ()  -> changeSlider()
+
+  "click .add-to-playlist" : () ->
+    popup = $('.playlist-selection')
+
+    popup.data('track', this)
+    popup.removeClass('hidden')
+
+  "click .playlist-selection input" : (event) ->
+    container = $('.playlist-selection')
+    name      = $(event.toElement).data('name')
+
+    container.addClass('hidden')
+    Meteor.call "addTrack",
+      playlistName: name
+      track: container.data('track')
+
+  "click .playlist-selection .cancel" : () ->
+    $('.playlist-selection').addClass('hidden')
 
 # Sound manipulation
 

@@ -11,6 +11,7 @@ Router.configure
 
       Meteor.subscribe "playerPlaylists", Session.get("seedId")
       Meteor.subscribe "activeRooms"
+      Meteor.subscribe "ownPlaylists"
 
 # Define page routes.
 Router.map ->

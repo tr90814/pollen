@@ -33,6 +33,8 @@ template(name="layout")
           input.col-xs-12(type="range" name="progress" min="0" max="100" value="0").progress
         else
           input.btn.btn-default.switch-off(value="Go back to own queue")
+          input.col-xs-6.col-sm-4.btn.btn-default.mute(placeholder="Mute")
+          a.label.add-to-playlist + Add to playlist
     .queue
       ul
         each queued
@@ -48,3 +50,9 @@ template(name="layout")
                 img(src="#{artwork_url}")
               span.title #{title}
               span.user #{user.username}
+
+  .playlist-selection.hidden.well
+    h4 Select a playlist to add the track to:
+    each playlists
+      input.btn.btn-default(type="submit" value="#{this.name}" data-name="#{this.name}")
+    span.cancel Cancel

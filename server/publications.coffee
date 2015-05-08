@@ -2,6 +2,7 @@ Meteor.publish "allRooms",        () ->           Rooms.find()
 Meteor.publish "activeRooms",     () ->           Rooms.find({$or: [{currentTrack: {$ne: undefined}}, {userId: this.userId}]})
 Meteor.publish "searchResults",   (username) ->   Results.find "data.username" : username
 Meteor.publish "roomUsers",       (username) ->   UserPresences.data
+Meteor.publish "ownPlaylists",    () ->           Playlists.find({userId: this.userId})
 Meteor.publish "roomPlaylists",   (roomUserId) -> return roomPlaylists(roomUserId)
 Meteor.publish "playerPlaylists", (userId) ->     return playerPlaylists(userId, this.userId)
 Meteor.publish "nodes",           (userId) ->     Rooms.find({seedId: userID})

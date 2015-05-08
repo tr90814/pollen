@@ -15,9 +15,6 @@ Template.roomList.helpers
     if Results.find({userId: Meteor.userId()}).count()
       Results.find {userId: Meteor.userId()}
 
-  playlists: ->
-    Playlists.find({},{name: {$ne: 'default'}})
-
 Template.roomList.events
   "submit [data-action=search]" : (event, template) ->
     event.preventDefault()
@@ -41,24 +38,6 @@ Template.roomList.events
   "click .message .username" : (event) ->
     $query = $(event.target).html()
     SCSearch($query)
-
-  "click .add-to-playlist" : () ->
-    popup = $('.playlist-selection')
-
-    popup.data('track', this)
-    popup.removeClass('hidden')
-
-  "click .playlist-selection input" : (event) ->
-    container = $('.playlist-selection')
-    name      = $(event.toElement).data('name')
-
-    container.addClass('hidden')
-    Meteor.call "addTrack",
-      playlistName: name
-      track: container.data('track')
-
-  "click .playlist-selection .cancel" : () ->
-    $('.playlist-selection').addClass('hidden')
 
 SCSearch = (query) ->
   SC.get '/tracks', { q: query }, (tracks) ->
