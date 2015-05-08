@@ -9,8 +9,6 @@ Meteor.methods
         userId : Meteor.userId()
         username : Meteor.user().username
         seedId : Meteor.userId()
-        # currentTrack : undefined
-        # currentPlaylist : 'default'
         profile:
           image: randomColour()
           description: undefined
@@ -68,6 +66,46 @@ Meteor.methods
       }
     })
 
+  playTrack : (params={}) ->
+    return unless params && params.track && params.playlistName
+    return unless params.track.trackId && params.track.user
+    unless Playlists.find({name: params.playlistName}).count()
+      Meteor.call 'createPlaylist', name: params.playlistName
+
+    tracks = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}).tracks
+
+    for track in tracks
+      track.index = track.index + 1
+
+    Playlists.update({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}, {$set: {tracks: tracks}})
+
+    count = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}).tracks.length
+
+    Playlists.update({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}, {
+      $push: {
+        tracks: {
+          $each: [
+            {
+              _id: new Meteor.Collection.ObjectID()._str
+              index : count
+              username : Meteor.user().username
+              userId : Meteor.userId()
+              playlistName : params.playlistName
+              trackId : params.track.trackId
+              artwork_url : params.track.artwork_url
+              description : params.track.description
+              genre : params.track.genre
+              title : params.track.title
+              user : params.track.user
+              duration : params.track.duration
+              creation_date : new Date()
+            }
+          ],
+          $position: 0
+        }
+      }
+    })
+
   switchTrackOrder : (params={}) ->
     return unless params.toId && params.fromId && params.playlistName
 
@@ -101,10 +139,7 @@ Meteor.methods
       username : Meteor.user().username
       name : params.name
       tracks : params.tracks || []
-      # position: 0
       creation_date : new Date()
-
-    console.log params.name
 
   incrementPlaylist : () ->
     if Playlists.find({$and: [{userId: Meteor.userId()}, {name: 'default'}]}).count()

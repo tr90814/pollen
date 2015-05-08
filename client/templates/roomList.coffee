@@ -25,8 +25,13 @@ Template.roomList.events
 
     $query.select()
 
-  "click .play" : () ->
+  "click .queue-track" : () ->
     Meteor.call "addTrack",
+      track: this
+      playlistName: 'default'
+
+  "click .play-track" : () ->
+    Meteor.call "playTrack",
       track: this
       playlistName: 'default'
 

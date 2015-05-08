@@ -30,7 +30,8 @@ template(name="roomList")
       if results
         each results
           .message
-            a.play Queue ►
+            a.play-track Play ►
+            a.queue-track Queue |►
             label.username #{user.username}:
             span.content #{title}
             a.label.add-to-playlist + Add to playlist
