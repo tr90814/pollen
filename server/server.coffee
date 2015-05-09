@@ -11,13 +11,13 @@ Meteor.methods
         userId : Meteor.userId()
         username : Meteor.user().username
         seedId : Meteor.userId()
-        # profile:
-        #   image: randomColour()
-        #   colour:
-        #     r: randomRGB()
-        #     g: randomRGB()
-        #     b: randomRGB()
-          # description: undefined
+        profile:
+          image: randomColour()
+          colour:
+            r: randomRGB()
+            g: randomRGB()
+            b: randomRGB()
+          description: undefined
         creation_date : new Date()
 
   genreColour : (params={}) ->
@@ -25,6 +25,8 @@ Meteor.methods
     profile = Rooms.findOne({userId: Meteor.userId()}).profile
     return unless profile && colour = profile.colour
 
+    console.log genreArray
+    console.log params
     for genre in genreArray
       if params.track.tag_list.indexOf(genre.name) != -1
         for band in Object.keys(colour)
