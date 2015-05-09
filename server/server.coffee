@@ -3,6 +3,7 @@ Meteor.methods
     # Playlists.remove({})
     # Results.remove({})
     # Rooms.remove({})
+    addProfile()
     addRGB()
     unless Rooms.findOne({userId: Meteor.userId()})
 
@@ -10,18 +11,19 @@ Meteor.methods
         userId : Meteor.userId()
         username : Meteor.user().username
         seedId : Meteor.userId()
-        profile:
-          image: randomColour()
-          colour:
-            r: randomRGB()
-            g: randomRGB()
-            b: randomRGB()
-          description: undefined
+        # profile:
+        #   image: randomColour()
+        #   colour:
+        #     r: randomRGB()
+        #     g: randomRGB()
+        #     b: randomRGB()
+          # description: undefined
         creation_date : new Date()
 
   genreColour : (params={}) ->
     return unless params.track
-    return unless colour = Rooms.findOne({userId: Meteor.userId()}).profile.colour
+    profile = Rooms.findOne({userId: Meteor.userId()}).profile
+    return unless profile && colour = profile.colour
 
     for genre in genreArray
       if params.track.tag_list.indexOf(genre.name) != -1
@@ -230,8 +232,27 @@ addRGB = () ->
           }
         }
       })
+      console.log doc.username + ' colour added'
   )
-  console.log 'colour added'
+
+
+addProfile = () ->
+  Rooms.find({}).forEach((doc)->
+    if !doc.profile
+      Rooms.update({userId: doc.userId},{
+        $set:{
+          profile:
+            image: randomColour()
+            colour:
+              r: randomRGB()
+              g: randomRGB()
+              b: randomRGB()
+        }
+      })
+      console.log doc.username + ' profile added'
+  )
+
+
 
 colorCompare = (existingBand, genreBand) ->
   difference = existingBand - genreBand
@@ -242,6 +263,12 @@ colorCompare = (existingBand, genreBand) ->
 
 randomRGB = () ->
   return Math.floor(Math.random()*256)
+
+randomColour = () ->
+  r = randomRGB()
+  g = randomRGB()
+  b = randomRGB()
+  return 'rgb(' + r + ',' + g + ',' + b + ')'
 
 checkIsValidRoom = (roomId) ->
   if not roomId then false
