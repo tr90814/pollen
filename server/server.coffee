@@ -19,18 +19,9 @@ Meteor.methods
           description: undefined
         creation_date : new Date()
 
-  setCurrentPlaylist : (params={}) ->
-    return unless params.playlistName
-    createPlaylistIfNeeded(params)
-
-    Rooms.update(
-      {userId: Meteor.userId()},
-      {$set: {currentPlaylist: params.playlistName}}
-    )
-
   genreColour : (params={}) ->
     return unless params.track
-    colour = Rooms.findOne({userId: Meteor.userId()}).profile.colour
+    return unless colour = Rooms.findOne({userId: Meteor.userId()}).profile.colour
 
     for genre in genreArray
       if params.track.tag_list.indexOf(genre.name) != -1
@@ -240,6 +231,7 @@ addRGB = () ->
         }
       })
   )
+  console.log 'colour added'
 
 colorCompare = (existingBand, genreBand) ->
   difference = existingBand - genreBand
