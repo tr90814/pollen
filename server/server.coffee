@@ -26,6 +26,8 @@ Meteor.methods
     return unless profile && colour = profile.colour
 
     for genre in genreArray
+      console.log genre
+      console.log params.track.tag_list
       if params.track.tag_list.indexOf(genre.name) != -1
         for band in Object.keys(colour)
           colour[band] = colorCompare(colour[band], genre.colour[band])
