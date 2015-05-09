@@ -3,6 +3,7 @@ Meteor.methods
     # Playlists.remove({})
     # Results.remove({})
     # Rooms.remove({})
+    addRGB()
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
@@ -11,20 +12,32 @@ Meteor.methods
         seedId : Meteor.userId()
         profile:
           image: randomColour()
+          colour:
+            r: randomRGB()
+            g: randomRGB()
+            b: randomRGB()
           description: undefined
         creation_date : new Date()
 
-    giveEveryoneADefault()
-
   setCurrentPlaylist : (params={}) ->
     return unless params.playlistName
-    if !Playlists.find({$and: [{userId: Meteor.userId()}, {name: params.playlistName}]}).count()
-      Meteor.call "createPlaylist",
-        name: params.playlistName
+    createPlaylistIfNeeded(params)
+
     Rooms.update(
       {userId: Meteor.userId()},
       {$set: {currentPlaylist: params.playlistName}}
     )
+
+  genreColour : (params={}) ->
+    return unless params.track
+    colour = Rooms.findOne({userId: Meteor.userId()}).profile.colour
+
+    for genre in genreArray
+      if params.track.tag_list.indexOf(genre.name) != -1
+        for band in Object.keys(colour)
+          colour[band] = colorCompare(colour[band], genre.colour[band])
+
+    Rooms.update({userId: Meteor.userId()}, {$set: {'profile.colour': colour}})
 
   playPlaylist : (params={}) ->
     return unless params && params.playlistName
@@ -56,6 +69,7 @@ Meteor.methods
           playlistName : params.playlistName
           trackId : params.track.trackId
           artwork_url : params.track.artwork_url
+          tag_list : params.track.tag_list
           description : params.track.description
           genre : params.track.genre
           title : params.track.title
@@ -69,8 +83,7 @@ Meteor.methods
   playTrack : (params={}) ->
     return unless params && params.track && params.playlistName
     return unless params.track.trackId && params.track.user
-    unless Playlists.find({name: params.playlistName}).count()
-      Meteor.call 'createPlaylist', name: params.playlistName
+    createPlaylistIfNeeded(params)
 
     tracks = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}).tracks
 
@@ -96,6 +109,7 @@ Meteor.methods
               description : params.track.description
               genre : params.track.genre
               title : params.track.title
+              tag_list : params.track.tag_list
               user : params.track.user
               duration : params.track.duration
               creation_date : new Date()
@@ -118,6 +132,7 @@ Meteor.methods
       {$and: [{name: params.playlistName}, {userId: Meteor.userId()}, { 'tracks._id': params.fromId}]},
       {$set: {'tracks.$.index' : params. toIndex}}
     )
+
     Playlists.update(
       {$and: [{name: params.playlistName}, {userId: Meteor.userId()}]},
       {
@@ -132,7 +147,7 @@ Meteor.methods
 
   createPlaylist : (params={}) ->
     params['name'] = params.name || 'defualt'
-    return if Playlists.find({$and: [{name: params.name}, {userId: Meteor.userId()}]}).count()
+    return unless params.name
 
     Playlists.insert
       userId : Meteor.userId()
@@ -162,19 +177,22 @@ Meteor.methods
       trackId : params.track.id
       artwork_url: params.track.artwork_url
       description: params.track.description
+      tag_list: params.track.tag_list
       genre: params.track.genre
       title: params.track.title
       user: params.track.user
       duration: params.track.duration
       creation_date : new Date()
 
-  removeOldResults : (userId) ->
-    Results.remove {userId: userId}
+  removeOldResults : () ->
+    Results.remove {userId: Meteor.userId}
 
   changeSeed : (seedId) ->
+    return unless seedId
     Rooms.update({userId: Meteor.userId()}, {$set: {seedId: seedId}})
 
   setCurrentTrack : (track) ->
+    return unless track
     Rooms.update({userId: Meteor.userId()}, {$set: {currentTrack: track}})
 
 # Setup an onDisconnect handler on UserPresenceSettings (from dpid:user-presence package).
@@ -204,18 +222,31 @@ UserPresenceSettings
     # else
     Rooms.update roomId, $set: user_count:roomUsersCount
 
-giveEveryoneADefault = () ->
+createPlaylistIfNeeded = (params) ->
+  if !Playlists.find({$and: [{userId: Meteor.userId()}, {name: params.playlistName}]}).count()
+    Meteor.call "createPlaylist",
+      name: params.playlistName
+
+addRGB = () ->
   Rooms.find({}).forEach((doc)->
-    if !Playlists.find({$and: [{userId: doc.userId}, {name: 'default'}]}).count()
-      Meteor.call 'createPlaylist',
-        name: 'default'
+    if !doc.profile.colour
+      Rooms.update({userId: doc.userId},{
+        $set:{
+          'profile.colour': {
+            r: randomRGB(),
+            g: randomRGB(),
+            b: randomRGB()
+          }
+        }
+      })
   )
 
-randomColour = () ->
-  r = randomRGB()
-  g = randomRGB()
-  b = randomRGB()
-  return 'rgb(' + r + ',' + g + ',' + b + ')'
+colorCompare = (existingBand, genreBand) ->
+  difference = existingBand - genreBand
+  newValue   = 0
+  if difference != 0
+    newValue = existingBand - (difference / Math.abs(difference))
+  return newValue
 
 randomRGB = () ->
   return Math.floor(Math.random()*256)
@@ -229,3 +260,23 @@ checkIsValidRoom = (roomId) ->
 removeRoom = (roomId) ->
   Rooms.remove roomId
   Results.remove roomId:roomId
+
+genreArray = [
+  name: 'rock'
+  colour:
+    r: 10
+    g: 10
+    b: 10
+  ,
+  name: 'house'
+  colour:
+    r: 65
+    g: 158
+    b: 125
+  ,
+  name: 'electronic'
+  colour:
+    r: 231
+    g: 241
+    b: 78
+]

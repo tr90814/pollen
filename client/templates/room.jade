@@ -7,8 +7,8 @@ template(name="room")
 
       .well
         if profile
-          if profile.image
-            .profile-pic(style="background: #{profile.image}")
+          if profile.colour
+            .profile-pic(style="background: rgb(#{profile.colour.r},#{profile.colour.g},#{profile.colour.b})")
           if profile.description
             span.description-container
               span.description #{profile.description}

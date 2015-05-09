@@ -47,7 +47,7 @@ Template.roomList.events
 SCSearch = (query) ->
   SC.get '/tracks', { q: query }, (tracks) ->
     if (typeof(tracks) == 'object')
-      Meteor.call "removeOldResults", Meteor.userId()
+      Meteor.call "removeOldResults"
       for track in tracks
         if track.streamable && track.sharing == "public"
           Meteor.call "createResult",

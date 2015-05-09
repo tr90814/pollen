@@ -49,6 +49,9 @@ Template.layout.helpers
             onload: -> updateSound(this)
             whileplaying: -> timer(this)
 
+        Meteor.call 'genreColour',
+          track: track
+
         [track]
 
     else if Session.get "currentSound"
