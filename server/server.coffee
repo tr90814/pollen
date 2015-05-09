@@ -21,12 +21,10 @@ Meteor.methods
         creation_date : new Date()
 
   genreColour : (params={}) ->
-    return unless params.track
+    return unless params.track && params.track.tag_list
     profile = Rooms.findOne({userId: Meteor.userId()}).profile
     return unless profile && colour = profile.colour
 
-    console.log genreArray
-    console.log params
     for genre in genreArray
       if params.track.tag_list.indexOf(genre.name) != -1
         for band in Object.keys(colour)
@@ -283,21 +281,40 @@ removeRoom = (roomId) ->
   Results.remove roomId:roomId
 
 genreArray = [
-  name: 'rock'
-  colour:
-    r: 10
-    g: 10
-    b: 10
-  ,
-  name: 'house'
-  colour:
-    r: 65
-    g: 158
-    b: 125
-  ,
-  name: 'electronic'
-  colour:
-    r: 231
-    g: 241
-    b: 78
+  {
+    {
+      name: 'rock'
+    },
+    {
+      colour: {
+        { r: 10 }
+        { g: 10 }
+        { b: 10 }
+      }
+    }
+  },
+  {
+    {
+      name: 'house'
+    },
+    {
+      colour: {
+        { r: 65 }
+        { g: 158 }
+        { b: 125 }
+      }
+    }
+  },
+  {
+    {
+      name: 'electronic'
+    },
+    {
+      colour: {
+        { r: 231 }
+        { g: 241 }
+        { b: 78 }
+      }
+    }
+  }
 ]
