@@ -84,6 +84,7 @@ template(name="room")
             each genre
               li.genre(data-name="#{this.name}")
                 label #{this.name}
+                label.count Total uses: #{this.count}
                 .profile-pic(style="background: #{genreColour}")
                 form.input-group(data-action="update-genre")
                   input.form-control.r(data-value="r" placeholder="#{this.colour.r}")
