@@ -82,14 +82,17 @@ template(name="room")
         .well
           ul.genres.profile
             each genre
-              li.genre
+              li.genre(data-name="#{this.name}")
                 label #{this.name}
                 .profile-pic(style="background: #{genreColour}")
-                form.input-group(data-action="update-genre" data-name="#{this.name}")
+                form.input-group(data-action="update-genre")
                   input.form-control.r(data-value="r" placeholder="#{this.colour.r}")
                   input.form-control.g(data-value="g" placeholder="#{this.colour.g}")
                   input.form-control.b(data-value="b" placeholder="#{this.colour.b}")
                   span.input-group-btn
                     input.btn.btn-default(type="submit" value="Update")
-
+                if active
+                  .btn.btn-default.change-active(data-state="false") Deactivate
+                else
+                  .btn.btn-default.change-active(data-state="true") Activate
 

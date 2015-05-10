@@ -10,6 +10,9 @@ Template.room.helpers
   genre : ->
     Genres.find()
 
+  active : ->
+    this.active
+
   genreColour : ->
     colour = this.colour
     'rgb(' + Math.floor(colour.r) + ',' + Math.floor(colour.g) + ',' + Math.floor(colour.b) + ')'
@@ -93,6 +96,7 @@ Template.room.events =
   "submit [data-action=update-genre]" : (event) ->
     event.preventDefault()
     form = $(event.target)
+    li   = form.parents('li.genre')
 
     colour =
       r: form.find('.r').val()
@@ -101,7 +105,15 @@ Template.room.events =
 
     Meteor.call "updateGenre",
       colour: colour
-      name: form.data('name')
+      name: li.data('name')
+
+  "click .change-active" : (event) ->
+    state = $(event.target).data('state')
+    li    = $(event.target).parents('li.genre')
+
+    Meteor.call "genreActiveState",
+      name: li.data('name')
+      state: state
 
   "submit [data-action=create-playlist]" : (event) ->
     event.preventDefault()

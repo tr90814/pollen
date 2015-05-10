@@ -23,6 +23,11 @@ Meteor.methods
           description: undefined
         creation_date : new Date()
 
+  genreActiveState : (params={})->
+    return unless params.name
+
+    Genres.update({name: params.name}, {$set: {active: params.state}})
+
   recordGenre : (params={}) ->
     return unless params.track && genre = params.track.genre
 
@@ -50,7 +55,7 @@ Meteor.methods
 
     console.log colour
 
-    for genre in Genres.find({}).fetch()
+    for genre in Genres.find({active: true}).fetch()
       if params.track.genre == genre.name
         for band in Object.keys(colour)
           colour[band] = colorCompare(colour[band], genre.colour[band])
