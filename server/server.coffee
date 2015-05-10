@@ -6,7 +6,7 @@ Meteor.methods
     # Results.remove({})
     # Rooms.remove({})
     # Genres.remove({})
-    setAllCurrentTracks()
+    # setAllCurrentTracks()
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
