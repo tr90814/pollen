@@ -26,8 +26,10 @@ template(name="room")
         span(class='label parentNode label-default #{state}') #{username}
       if oneNode
         label is:
-      if nodes
+      else if nodes
         label are:
+      else
+        label no-one
       each node
         span(class='label node label-default #{state}') #{username}
 
