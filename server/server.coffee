@@ -41,7 +41,7 @@ Meteor.methods
   updateGenre : (params={}) ->
     return unless params.colour && params.name
 
-    Genres.update({genres: params.genre}, {$set: {colour: params.colour}})
+    Genres.update({name: params.name}, {$set: {colour: params.colour}})
 
   genreColour : (params={}) ->
     return unless params.track && params.track.genre
