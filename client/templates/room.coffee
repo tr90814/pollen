@@ -8,7 +8,7 @@ Template.room.helpers
     Rooms.findOne({userId: Meteor.userId()}).admin
 
   genre : ->
-    Genres.find({}, limit=100).sort({count: -1})
+    Genres.find({}, {sort: {count: -1}})
 
   active : ->
     this.active
