@@ -85,7 +85,7 @@ template(name="room")
               li.genre
                 label #{this.name}
                 .profile-pic(style="background: #{genreColour}")
-                form.input-group(data-action="update-genre")
+                form.input-group(data-action="update-genre" data-name="#{genre.name}")
                   input.form-control.r(data-value="r" placeholder="#{this.colour.r}")
                   input.form-control.g(data-value="g" placeholder="#{this.colour.g}")
                   input.form-control.b(data-value="b" placeholder="#{this.colour.b}")

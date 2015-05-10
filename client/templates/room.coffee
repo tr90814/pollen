@@ -92,15 +92,16 @@ Template.room.events =
 
   "submit [data-action=update-genre]" : (event) ->
     event.preventDefault()
+    form = $(event.target)
 
     colour =
-      r: this.find('.r').val()
-      g: this.find('.g').val()
-      b: this.find('.b').val()
+      r: form.find('.r').val()
+      g: form.find('.g').val()
+      b: form.find('.b').val()
 
     Meteor.call "updateGenre",
       colour: colour
-      name: this.name
+      name: form.data('name')
 
   "submit [data-action=create-playlist]" : (event) ->
     event.preventDefault()
