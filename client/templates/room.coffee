@@ -84,6 +84,8 @@ Template.room.events =
       _id : this._id
 
   "click .queue li" : () ->
+    return if this.data('name') == 'default'
+
     Meteor.call "addTrack",
       track: this
       playlistName: 'default'
