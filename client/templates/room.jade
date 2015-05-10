@@ -24,7 +24,10 @@ template(name="room")
       label Listening to
       each parentNode
         span(class='label parentNode label-default #{state}') #{username}
-      label are:
+      if oneNode
+        label is:
+      if nodes
+        label are:
       each node
         span(class='label node label-default #{state}') #{username}
 

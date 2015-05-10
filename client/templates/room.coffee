@@ -58,6 +58,14 @@ Template.room.helpers
     if nodeId = Session.get 'nodeId'
       Rooms.find({$and: [{seedId: nodeId}, {userId: {$ne: nodeId}}]}).fetch()
 
+  oneNode : ->
+    if nodeId = Session.get 'nodeId'
+      Rooms.find({$and: [{seedId: nodeId}, {userId: {$ne: nodeId}}]}).count() == 1
+
+  oneNode : ->
+    if nodeId = Session.get 'nodeId'
+      Rooms.find({$and: [{seedId: nodeId}, {userId: {$ne: nodeId}}]}).count() > 1
+
   switchState : ->
     if Session.get 'roomId'
       Rooms.findOne(Session.get('roomId')).seedId != Session.get("seedId")
