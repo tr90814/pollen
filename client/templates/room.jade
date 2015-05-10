@@ -2,13 +2,13 @@ template(name="room")
 
     h2 #{roomName}
 
-    #profile
+    .profile
       h4 Profile
 
       .well
         if profile
           if profile.colour
-            .profile-pic(style="background: rgb(#{profile.colour.r},#{profile.colour.g},#{profile.colour.b})")
+            .profile-pic(style="background: #{profileColour}")
           if profile.description
             span.description-container
               span.description #{profile.description}
@@ -75,3 +75,21 @@ template(name="room")
           input.form-control.search-input(data-value="new-playlist" placeholder="Make a playlist")
           span.input-group-btn
             input.btn.btn-default(type="submit" value="Create")
+
+
+      if admin
+        h4 Genre Colours
+        .well
+          ul.genres.profile
+            each genre
+              li.genre
+                label #{this.name}
+                .profile-pic(style="background: #{genreColour}")
+                form.input-group(data-action="update-genre")
+                  input.form-control.r(data-value="r" placeholder="#{this.colour.r}")
+                  input.form-control.g(data-value="g" placeholder="#{this.colour.g}")
+                  input.form-control.b(data-value="b" placeholder="#{this.colour.b}")
+                  span.input-group-btn
+                    input.btn.btn-default(type="submit" value="Update")
+
+

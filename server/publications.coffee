@@ -6,6 +6,14 @@ Meteor.publish "ownPlaylists",    () ->           Playlists.find({userId: this.u
 Meteor.publish "roomPlaylists",   (roomUserId) -> return roomPlaylists(roomUserId)
 Meteor.publish "playerPlaylists", (userId) ->     return playerPlaylists(userId, this.userId)
 Meteor.publish "nodes",           (userId) ->     Rooms.find({seedId: userID})
+Meteor.publish "allGenres",       () ->           Genres.find()
+
+Genres.allow({
+  update: () ->
+    return true
+  insert: () ->
+    return true
+})
 
 roomPlaylists = (roomUserId) ->
   unless room = Rooms.findOne({userId: roomUserId})

@@ -3,6 +3,9 @@ Meteor.methods
     # Playlists.remove({})
     # Results.remove({})
     # Rooms.remove({})
+    # Genres.remove({})
+    Rooms.update({username: 'Trodge'}, {$set: {admin: true}})
+    Rooms.update({username: 'dan'}, {$set: {admin: true}})
     addProfile()
     addRGB()
     unless Rooms.findOne({userId: Meteor.userId()})
@@ -20,19 +23,40 @@ Meteor.methods
           description: undefined
         creation_date : new Date()
 
+  recordGenre : (params={}) ->
+    return unless params.track && genre = params.track.genre
+
+    if Genres.find({name: genre}).count()
+      Genres.update({genres: genre}, {$inc: {count: 1}})
+    else
+      Genres.insert
+        name : genre
+        count : 1
+        colour:
+          r: randomRGB()
+          g: randomRGB()
+          b: randomRGB()
+        creation_date : new Date()
+
+  updateGenre : (params={}) ->
+    return unless params.colour && params.name
+
+    Genres.update({genres: params.genre}, {$set: {colour: params.colour}})
+
   genreColour : (params={}) ->
-    return unless params.track && params.track.tag_list
+    return unless params.track && params.track.genre
     profile = Rooms.findOne({userId: Meteor.userId()}).profile
     return unless profile && colour = profile.colour
 
-    for genre in genreArray
-      console.log genre
-      console.log params.track.tag_list
-      if params.track.tag_list.indexOf(genre.name) != -1
+    console.log colour
+
+    for genre in Genres.find({}).fetch()
+      if params.track.genre == genre.name
         for band in Object.keys(colour)
           colour[band] = colorCompare(colour[band], genre.colour[band])
 
     Rooms.update({userId: Meteor.userId()}, {$set: {'profile.colour': colour}})
+    console.log colour
 
   playPlaylist : (params={}) ->
     return unless params && params.playlistName
@@ -64,7 +88,7 @@ Meteor.methods
           playlistName : params.playlistName
           trackId : params.track.trackId
           artwork_url : params.track.artwork_url
-          tag_list : params.track.tag_list
+          genre : params.track.genre
           description : params.track.description
           genre : params.track.genre
           title : params.track.title
@@ -104,7 +128,7 @@ Meteor.methods
               description : params.track.description
               genre : params.track.genre
               title : params.track.title
-              tag_list : params.track.tag_list
+              genre : params.track.genre
               user : params.track.user
               duration : params.track.duration
               creation_date : new Date()
@@ -172,7 +196,7 @@ Meteor.methods
       trackId : params.track.id
       artwork_url: params.track.artwork_url
       description: params.track.description
-      tag_list: params.track.tag_list
+      genre: params.track.genre
       genre: params.track.genre
       title: params.track.title
       user: params.track.user
@@ -237,7 +261,6 @@ addRGB = () ->
       console.log doc.username + ' colour added'
   )
 
-
 addProfile = () ->
   Rooms.find({}).forEach((doc)->
     if !doc.profile
@@ -254,11 +277,9 @@ addProfile = () ->
       console.log doc.username + ' profile added'
   )
 
-
-
 colorCompare = (existingBand, genreBand) ->
   difference = existingBand - genreBand
-  newValue   = 0
+  newValue   = existingBand
   if difference != 0
     newValue = existingBand - (difference / Math.abs(difference))
   return newValue
@@ -281,42 +302,3 @@ checkIsValidRoom = (roomId) ->
 removeRoom = (roomId) ->
   Rooms.remove roomId
   Results.remove roomId:roomId
-
-genreArray = [
-  {
-    {
-      name: 'rock'
-    },
-    {
-      colour: {
-        { r: 10 }
-        { g: 10 }
-        { b: 10 }
-      }
-    }
-  },
-  {
-    {
-      name: 'house'
-    },
-    {
-      colour: {
-        { r: 65 }
-        { g: 158 }
-        { b: 125 }
-      }
-    }
-  },
-  {
-    {
-      name: 'electronic'
-    },
-    {
-      colour: {
-        { r: 231 }
-        { g: 241 }
-        { b: 78 }
-      }
-    }
-  }
-]

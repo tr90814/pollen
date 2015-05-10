@@ -49,8 +49,10 @@ Template.layout.helpers
             onload: -> updateSound(this)
             whileplaying: -> timer(this)
 
-        Meteor.call 'genreColour',
-          track: track
+          Meteor.call 'genreColour',
+            track: track
+          Meteor.call 'recordGenre',
+            track: track
 
         [track]
 
@@ -121,13 +123,15 @@ setNewTrack = (track, obj) ->
     Meteor.call 'incrementPlaylist'
 
 stopTrack = () ->
-  seedId          = Session.get('seedId')
-  hasTracks       = Playlists.find({$and: [{userId: seedId},{name: 'default'}]}).count()
+  Meteor.call 'setCurrentTrack', undefined
+
+  seedId    = Session.get('seedId')
+  hasTracks = Playlists.find({$and: [{userId: seedId},{name: 'default'}]}).count()
+
   if Session.get('currentSound') && hasTracks
     soundManager.stop(Session.get('currentSound').sID)
   Session.set "currentSound", undefined
   Session.set "currentSoundId", undefined
-  Meteor.call 'setCurrentTrack', undefined
 
 backToOwnQueue = () ->
   stopTrack()

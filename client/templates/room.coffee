@@ -4,6 +4,20 @@ Template.room.helpers
     room ?= name : "Current Room"
     room.username
 
+  admin : ->
+    Rooms.findOne({userId: Meteor.userId()}).admin
+
+  genre : ->
+    Genres.find()
+
+  genreColour : ->
+    colour = this.colour
+    'rgb(' + Math.floor(colour.r) + ',' + Math.floor(colour.g) + ',' + Math.floor(colour.b) + ')'
+
+  profileColour : ->
+    colour = Rooms.findOne({userId: Meteor.userId()}).colour
+    'rgb(' + Math.floor(colour.r) + ',' + Math.floor(colour.g) + ',' + Math.floor(colour.b) + ')'
+
   queued : ->
     if Session.get 'roomId'
       room = Rooms.findOne(Session.get('roomId'))
@@ -73,6 +87,18 @@ Template.room.events =
     Meteor.call "addTrack",
       track: this
       playlistName: 'default'
+
+  "submit [data-action=update-genre]" : (event) ->
+    event.preventDefault()
+
+    colour =
+      r: this.r.val()
+      g: this.g.val()
+      b: this.b.val()
+
+    Meteor.call "updateGenre",
+      colour: colour
+      name: this.name
 
   "submit [data-action=create-playlist]" : (event) ->
     event.preventDefault()
