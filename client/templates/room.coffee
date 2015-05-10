@@ -62,7 +62,7 @@ Template.room.helpers
     if nodeId = Session.get 'nodeId'
       Rooms.find({$and: [{seedId: nodeId}, {userId: {$ne: nodeId}}]}).count() == 1
 
-  oneNode : ->
+  nodes : ->
     if nodeId = Session.get 'nodeId'
       Rooms.find({$and: [{seedId: nodeId}, {userId: {$ne: nodeId}}]}).count() > 1
 
