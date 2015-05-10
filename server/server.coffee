@@ -4,16 +4,15 @@ Meteor.methods
     # Results.remove({})
     # Rooms.remove({})
     # Genres.remove({})
-    Rooms.update({username: 'Trodge'}, {$set: {admin: true}})
-    Rooms.update({username: 'dan'}, {$set: {admin: true}})
-    addProfile()
-    addRGB()
+    # addProfile()
+    # addRGB()
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
         userId : Meteor.userId()
         username : Meteor.user().username
         seedId : Meteor.userId()
+        currentTrack : undefined
         profile:
           image: randomColour()
           colour:

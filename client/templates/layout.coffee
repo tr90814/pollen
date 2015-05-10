@@ -137,6 +137,7 @@ backToOwnQueue = () ->
   stopTrack()
   Meteor.call "changeSeed", Meteor.userId()
   Session.set "seedId", Meteor.userId()
+  Meteor.call "setCurrentTrack", undefined
 
 updateSound = (sound) ->
   Session.set "currentSound", sound
