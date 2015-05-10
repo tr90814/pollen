@@ -1,3 +1,6 @@
+require = Npm.require
+newrelic = require('newrelic')
+
 Meteor.methods
   createRoom : (callback) ->
     # Playlists.remove({})
