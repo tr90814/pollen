@@ -55,7 +55,7 @@ Meteor.methods
     for genre in Genres.find({active: true}).fetch()
       if params.track.genre == genre.name
         for band in Object.keys(colour)
-          colour[band] = colorCompare(colour[band], genre.colour[band])
+          colour[band] = colorCompare(parseInt(colour[band]), parseInt(genre.colour[band]))
 
     Rooms.update({userId: Meteor.userId()}, {$set: {'profile.colour': colour}})
 
