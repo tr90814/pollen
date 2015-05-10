@@ -1,5 +1,3 @@
-Kadira.connect('D5K3HuHRTZMvaqyYY', 'cd689710-5925-41ad-a8d2-a57101dc39a3')
-
 Meteor.methods
   createRoom : (callback) ->
     # Playlists.remove({})
