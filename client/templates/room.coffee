@@ -65,7 +65,7 @@ Template.room.helpers
 
   switchState : ->
     if Session.get 'roomId'
-      Rooms.findOne(Session.get('roomId')).seedId != Session.get("seedId")
+      Rooms.findOne(Session.get('roomId')).userId != Session.get("seedId")
 
   playlistState : ->
     Session.get('currentPlaylist') != this.name

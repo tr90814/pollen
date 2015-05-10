@@ -36,7 +36,7 @@ template(name="room")
     unless ownProfile
       h4 Tracks
       #player.well
-        if queued.count
+        if queued
           .queue
             ul
               each queued
