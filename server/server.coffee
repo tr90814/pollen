@@ -6,8 +6,7 @@ Meteor.methods
     # Results.remove({})
     # Rooms.remove({})
     # Genres.remove({})
-    # addProfile()
-    # addRGB()
+    setAllCurrentTracks()
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
@@ -264,20 +263,15 @@ addRGB = () ->
       console.log doc.username + ' colour added'
   )
 
-addProfile = () ->
+setAllCurrentTracks = () ->
   Rooms.find({}).forEach((doc)->
-    if !doc.profile
+    if doc.currentTrack && doc.username != 'Trodge'
       Rooms.update({userId: doc.userId},{
         $set:{
-          profile:
-            image: randomColour()
-            colour:
-              r: randomRGB()
-              g: randomRGB()
-              b: randomRGB()
+          currentTrack: undefined
         }
       })
-      console.log doc.username + ' profile added'
+      console.log doc.username + ' currentTrack unset'
   )
 
 colorCompare = (existingBand, genreBand) ->
