@@ -94,9 +94,9 @@ Template.room.events =
     event.preventDefault()
 
     colour =
-      r: this.r.val()
-      g: this.g.val()
-      b: this.b.val()
+      r: this.find('.r').val()
+      g: this.find('.g').val()
+      b: this.find('.b').val()
 
     Meteor.call "updateGenre",
       colour: colour
