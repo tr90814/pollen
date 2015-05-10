@@ -30,9 +30,10 @@ template(name="layout")
           div.col-xs-6.col-sm-4.btn.btn-default.timer
             span.load
             span.time 0:00
-          input.col-xs-6.col-sm-8(type="range" name="progress" min="0" max="100" value="0")
+          input.col-xs-6.col-sm-8.progress(type="range" name="progress" min="0" max="100" value="0")
         else
           input.btn.btn-default.switch-off(value="Go back to own queue")
+          input.col-xs-6.col-sm-4.btn.btn-default.show-hide-queue(placeholder="Show/hide queue")
           input.col-xs-6.col-sm-4.btn.btn-default.mute(placeholder="Mute")
           a.label.add-to-playlist + Add to playlist
     .queue
