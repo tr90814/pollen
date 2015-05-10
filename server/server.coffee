@@ -32,7 +32,7 @@ Meteor.methods
     return unless params.track && genre = params.track.genre
 
     if Genres.find({name: genre}).count()
-      Genres.update({genres: genre}, {$inc: {count: 1}})
+      Genres.update({name: genre}, {$inc: {count: 1}})
     else
       Genres.insert
         name : genre
@@ -53,15 +53,12 @@ Meteor.methods
     profile = Rooms.findOne({userId: Meteor.userId()}).profile
     return unless profile && colour = profile.colour
 
-    console.log colour
-
     for genre in Genres.find({active: true}).fetch()
       if params.track.genre == genre.name
         for band in Object.keys(colour)
           colour[band] = colorCompare(colour[band], genre.colour[band])
 
     Rooms.update({userId: Meteor.userId()}, {$set: {'profile.colour': colour}})
-    console.log colour
 
   playPlaylist : (params={}) ->
     return unless params && params.playlistName
