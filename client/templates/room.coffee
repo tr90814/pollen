@@ -15,7 +15,7 @@ Template.room.helpers
     'rgb(' + Math.floor(colour.r) + ',' + Math.floor(colour.g) + ',' + Math.floor(colour.b) + ')'
 
   profileColour : ->
-    colour = Rooms.findOne({userId: Meteor.userId()}).colour
+    colour = Rooms.findOne({userId: Meteor.userId()}).profile.colour
     'rgb(' + Math.floor(colour.r) + ',' + Math.floor(colour.g) + ',' + Math.floor(colour.b) + ')'
 
   queued : ->
