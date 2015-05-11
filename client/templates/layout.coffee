@@ -56,6 +56,9 @@ Template.layout.helpers
 
         [track]
 
+      else
+        stopTrack()
+
     else if Session.get "currentSound"
       stopTrack()
 
