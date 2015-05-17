@@ -8,13 +8,6 @@ Meteor.publish "playerPlaylists", (userId) ->     return playerPlaylists(userId,
 Meteor.publish "nodes",           (userId) ->     Rooms.find({seedId: userID})
 Meteor.publish "allGenres",       () ->           Genres.find()
 
-Genres.allow({
-  update: () ->
-    return true
-  insert: () ->
-    return true
-})
-
 roomPlaylists = (roomUserId) ->
   unless room = Rooms.findOne({userId: roomUserId})
     return []
@@ -37,6 +30,5 @@ seedLoop = (userId, meteorId) ->
     return
   else
     seedLoop(room.seedId, meteorId)
-
 
 # SIMON WORDS TO MUM

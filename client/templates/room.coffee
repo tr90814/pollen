@@ -22,8 +22,8 @@ Template.room.helpers
     'rgb(' + Math.floor(colour.r) + ',' + Math.floor(colour.g) + ',' + Math.floor(colour.b) + ')'
 
   queued : ->
-    playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
-    return playlist.tracks
+    if playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
+      return playlist.tracks
 
   profile : ->
     if Session.get 'roomId'

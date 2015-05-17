@@ -45,7 +45,7 @@ Template.roomList.events
     SCSearch($query)
 
 SCSearch = (query) ->
-  SC.get '/tracks', { q: query }, (tracks) ->
+  SC.get '/tracks', { q: query, limit: 100 }, (tracks) ->
     if (typeof(tracks) == 'object')
       Meteor.call "removeOldResults"
       for track in tracks

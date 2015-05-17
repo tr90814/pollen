@@ -25,42 +25,7 @@ Template.layout.helpers
 
   message : ->
     return if Session.get('currentSound') == true
-
-    if Meteor.userId() != Session.get('seedId')
-      playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
-    else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'default'}]})
-
-    if playlist && playlist.tracks
-      if track = playlist.tracks[0]
-        noTrackPlaying       = !Session.get('currentSound')
-        nextTrackIsDifferent = Session.get('currentSoundId') != track.trackId
-
-        if noTrackPlaying || nextTrackIsDifferent
-          if Session.get('currentSound')
-            stopTrack()
-          else
-            Session.set 'currentSound', true
-          SC.stream "/tracks/" + track.trackId,
-            useHTML5Audio: true
-            preferFlash: false
-            autoPlay: true
-            onfinish: -> nextTrack()
-            onplay: -> onPlay(this, track)
-            onload: -> updateSound(this)
-            whileplaying: -> timer(this)
-
-          Meteor.call 'genreColour',
-            track: track
-          Meteor.call 'recordGenre',
-            track: track
-
-        [track]
-
-      else
-        stopTrack()
-
-    else if Session.get "currentSound"
-      stopTrack()
+    playMessage()
 
 Template.layout.events =
   "click .skip"             : ()  -> nextTrack()
@@ -87,6 +52,7 @@ Template.layout.events =
     name      = $(event.toElement).data('name')
 
     container.addClass('hidden')
+
     Meteor.call "addTrack",
       playlistName: name
       track: container.data('track')
@@ -95,6 +61,43 @@ Template.layout.events =
     $('.playlist-selection').addClass('hidden')
 
 # Sound manipulation
+
+playMessage = () ->
+  if Meteor.userId() != Session.get('seedId')
+    playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
+  else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'default'}]})
+
+  if playlist && playlist.tracks
+    if track = playlist.tracks[0]
+      noTrackPlaying       = !Session.get('currentSound')
+      nextTrackIsDifferent = Session.get('currentSoundId') != track.trackId
+
+      if noTrackPlaying || nextTrackIsDifferent
+        if Session.get('currentSound')
+          stopTrack()
+        else
+          Session.set 'currentSound', true
+        SC.stream "/tracks/" + track.trackId,
+          useHTML5Audio: true
+          preferFlash: false
+          autoPlay: true
+          onfinish: -> nextTrack()
+          onplay: -> onPlay(this, track)
+          onload: -> updateSound(this)
+          whileplaying: -> timer(this)
+
+        Meteor.call 'genreColour',
+          track: track
+        Meteor.call 'recordGenre',
+          track: track
+
+      [track]
+
+    else
+      stopTrack()
+
+  else if Session.get "currentSound"
+    stopTrack()
 
 toggleMute = () ->
   if soundManager
@@ -111,9 +114,11 @@ onPlay = (sound, track) ->
   $('.progress').val(0)
 
 togglePause = (bool) ->
-  return unless currentSound = Session.get('currentSound')
-  action = if bool then "resume" else "pause"
-  soundManager[action](currentSound.sID)
+  if currentSound = Session.get('currentSound')
+    action = if bool then "resume" else "pause"
+    soundManager[action](currentSound.sID)
+  else
+    playMessage()
 
 nextTrack = () ->
   stopTrack()

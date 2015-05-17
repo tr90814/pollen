@@ -78,7 +78,10 @@ Meteor.methods
     unless Playlists.find({name: params.playlistName}).count()
       Meteor.call 'createPlaylist', name: params.playlistName
 
-    count = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}).tracks.length
+    if count = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]})
+      count = count.tracks.length
+    else
+      count = 0
 
     Playlists.update({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]}, {
       $addToSet: {
