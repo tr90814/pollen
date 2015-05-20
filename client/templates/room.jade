@@ -43,6 +43,7 @@ template(name="room")
                 li.item
                   span.artwork
                     img(src="#{artwork_url}")
+                  a.queue-track Add to queue
                   span.title #{title}
                   span.user #{user.username}
         if switchState
@@ -73,6 +74,8 @@ template(name="room")
                     li(draggable="true", data-id="#{_id}").item.track
                       span.artwork
                         img(src="#{artwork_url}")
+                      unless isDefault
+                        a.queue-track Add to queue
                       a.remove-track Remove
                       span.title #{title}
                       span.user #{user.username}rack

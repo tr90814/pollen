@@ -1,33 +1,41 @@
-Meteor.publish "allRooms",        () ->           Rooms.find()
-Meteor.publish "activeRooms",     () ->           Rooms.find({$or: [{currentTrack: {$ne: undefined}}, {userId: this.userId}]})
-Meteor.publish "searchResults",   (username) ->   Results.find "data.username" : username
-Meteor.publish "roomUsers",       (username) ->   UserPresences.data
-Meteor.publish "ownPlaylists",    () ->           Playlists.find({userId: this.userId})
-Meteor.publish "roomPlaylists",   (roomUserId) -> return roomPlaylists(roomUserId)
-Meteor.publish "playerPlaylists", (userId) ->     return playerPlaylists(userId, this.userId)
-Meteor.publish "nodes",           (userId) ->     Rooms.find({seedId: userID})
-Meteor.publish "allGenres",       () ->           Genres.find()
+Meteor.publish "allRooms",      () ->         Rooms.find()
+Meteor.publish "activeRooms",   () ->         Rooms.find({$or: [{currentTrack: {$ne: undefined}}, {userId: this.userId}]})
+Meteor.publish "searchResults", (username) -> Results.find "data.username" : username
+Meteor.publish "roomUsers",     (username) -> UserPresences.data
+Meteor.publish "nodes",         (userId) ->   Rooms.find({seedId: userID})
+Meteor.publish "allGenres",     (userId) ->   if Rooms.find({userId: userId}).admin then Genres.find() else []
+Meteor.publish "playlists",     (args) ->     return getPlaylists(args, this.userId)
 
-roomPlaylists = (roomUserId) ->
-  unless room = Rooms.findOne({userId: roomUserId})
-    return []
-  seedId = room.seedId
-  if seedId == roomUserId
-    return Playlists.find({$and: [{userId : roomUserId}, {name: room.currentPlaylist}]})
-  roomPlaylists(seedId)
+getPlaylists = (args, meteorId) ->
+  return unless args.seedId
+  userId = if args.seedId == meteorId then meteorId else seedLoop(args.seedId, meteorId)
 
-playerPlaylists = (userId, meteorId) ->
-  if userId == meteorId
-    Playlists.find({userId: meteorId})
+  if args.roomUserId && args.roomUserId != meteorId
+    room = roomLoop(args.roomUserId)
+    Playlists.find({
+      $or: [
+        {$and: [{userId: userId}, {name: 'default'}]},
+        {$and: [{userId: room.userId}, {name: 'default'}]},
+        {userId: meteorId}
+      ]})
   else
-    seedLoop(userId, meteorId)
+    Playlists.find({
+      $or: [
+        {$and: [{userId: userId}, {name: 'default'}]},
+        {userId: meteorId}
+      ]})
+
+roomLoop = (roomUserId) ->
+  return false unless room = Rooms.findOne({userId: roomUserId})
+  return room if room.seedId == roomUserId
+  roomLoop(seedId)
 
 seedLoop = (userId, meteorId) ->
   room = Rooms.findOne({userId: userId})
   if room.seedId == room.userId
-    Playlists.find({$and: [{userId: room.userId}, {name: 'default'}]})
+    return room.userId
   else if room.seedId == meteorId
-    return
+    return false
   else
     seedLoop(room.seedId, meteorId)
 

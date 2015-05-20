@@ -9,11 +9,6 @@ Router.configure
       unless Session.get "currentPlaylist"
         Session.set "currentPlaylist", 'default'
 
-      Meteor.subscribe "playerPlaylists", Session.get("seedId")
-      Meteor.subscribe "activeRooms"
-      Meteor.subscribe "ownPlaylists"
-      Meteor.subscribe "allGenres"
-
 # Define page routes.
 Router.map ->
 
@@ -23,10 +18,14 @@ Router.map ->
     @.route "/rooms",
       template : "roomList"
       waitOn : ->
+        Meteor.subscribe "activeRooms"
         Meteor.subscribe "searchResults", Meteor.username
+
       action : ->
         Session.set "roomId", null
         Session.set "roomUserId", null
+        Meteor.subscribe "playlists",
+          seedId: Session.get("seedId")
         @.render()
 
     @.route "/room/:_id",
@@ -45,7 +44,10 @@ Router.map ->
           Session.set "roomUserId", Rooms.findOne(@.params._id).userId
           Session.set("nodeId", Session.get('roomUserId'))
         Meteor.call "createRoom", @.params._id, Meteor.user().username
-        Meteor.subscribe "roomPlaylists", Session.get('roomUserId')
+        Meteor.subscribe "allGenres", Session.get('roomUserId')
+        Meteor.subscribe "playlists",
+          roomUserId: Session.get('roomUserId')
+          seedId: Session.get("seedId")
 
         @.render()
       # Remove user from the list of users on unload

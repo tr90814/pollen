@@ -40,7 +40,7 @@ Template.room.helpers
     this.tracks
 
   isDefault : ->
-    this.name == "default"
+    this.name == "default" || this.playlistName == 'default'
 
   roomUsers : ->
     if roomId = Session.get 'roomId'
@@ -87,11 +87,12 @@ Template.room.events =
 
   "click .remove-track" : () ->
     return unless this.playlistName
+    event.preventDefault()
     Meteor.call 'removeTrackFromPlaylist',
       playlistName : this.playlistName
       _id : this._id
 
-  "click .queue li" : () ->
+  "click .queue-track" : () ->
     return if this.playlistName == 'default'
 
     Meteor.call "addTrack",

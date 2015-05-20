@@ -63,6 +63,7 @@ Template.layout.events =
 # Sound manipulation
 
 playMessage = () ->
+  console.log 'enterFunction::playMessage ' + new Date()
   if Meteor.userId() != Session.get('seedId')
     playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
   else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'default'}]})
@@ -77,6 +78,8 @@ playMessage = () ->
           stopTrack()
         else
           Session.set 'currentSound', true
+        console.log track
+        console.log 'getStream::playMessage ' + new Date()
         SC.stream "/tracks/" + track.trackId,
           useHTML5Audio: true
           preferFlash: false
@@ -107,6 +110,7 @@ toggleMute = () ->
       soundManager.mute()
 
 onPlay = (sound, track) ->
+  console.log 'onPlay -> onPlay ' + new Date()
   Meteor.call 'setCurrentTrack',
     title: track.title
     artist: track.user.username
@@ -121,6 +125,7 @@ togglePause = (bool) ->
     playMessage()
 
 nextTrack = () ->
+  console.log 'Finished -> nextTrack ' + new Date()
   stopTrack()
   Meteor.call 'incrementPlaylist'
 
@@ -148,6 +153,7 @@ backToOwnQueue = () ->
   Meteor.call "setCurrentTrack", undefined
 
 updateSound = (sound) ->
+  console.log 'onLoad -> updateSound' + new Date()
   Session.set "currentSound", sound
 
 # Misc helpers
