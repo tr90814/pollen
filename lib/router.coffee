@@ -20,12 +20,12 @@ Router.map ->
       waitOn : ->
         Meteor.subscribe "activeRooms"
         Meteor.subscribe "searchResults", Meteor.username
+        Meteor.subscribe "playlists",
+          seedId: Session.get("seedId")
 
       action : ->
         Session.set "roomId", null
         Session.set "roomUserId", null
-        Meteor.subscribe "playlists",
-          seedId: Session.get("seedId")
         @.render()
 
     @.route "/room/:_id",
