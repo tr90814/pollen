@@ -52,7 +52,6 @@ Router.map ->
         @.render()
       # Remove user from the list of users on unload
       unload : ->
-        Meteor.call "changeSeed", Meteor.userId()
         Session.set "roomId", null
 
 # When navigating to pages, check that we have a userId. If not, then render home page instead.
