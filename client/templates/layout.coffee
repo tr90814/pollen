@@ -134,9 +134,7 @@ setNewTrack = (track, obj) ->
 stopTrack = () ->
   Meteor.call 'setCurrentTrack', undefined
 
-  console.log Session.get('currentSound')
-
-  if Session.get('currentSound')
+  if Session.get('currentSound') && Rooms.find().count() # Meteor reload no soundmanager bug
     soundManager.stop(Session.get('currentSound').sID)
 
   Session.set "currentSound", undefined
