@@ -3,11 +3,7 @@ unless process.env.NODE_ENV == "development"
 
 Meteor.methods
   createRoom : (callback) ->
-    # Playlists.remove({})
-    # Results.remove({})
-    # Rooms.remove({})
-    # Genres.remove({})
-    giveEveryoneADefault()
+    # giveEveryoneADefault() ** Migration **
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
@@ -267,18 +263,6 @@ addRGB = () ->
       console.log doc.username + ' colour added'
   )
 
-giveEveryoneADefault = () ->
-  Rooms.find({}).forEach((doc)->
-    if !Playlists.find({$and: [{name: 'queue'}, {userId: doc.userId}]}).count()
-      Playlists.insert
-        userId : doc.userId()
-        username : doc.username
-        name : 'queue'
-        tracks : []
-        creation_date : new Date()
-      console.log doc.username + ' added queue'
-  )
-
 colorCompare = (existingBand, genreBand) ->
   difference = existingBand - genreBand
   newValue   = existingBand
@@ -304,3 +288,17 @@ checkIsValidRoom = (roomId) ->
 removeRoom = (roomId) ->
   Rooms.remove roomId
   Results.remove roomId:roomId
+
+# Migration example
+
+giveEveryoneADefault = () ->
+  Rooms.find({}).forEach((doc)->
+    if !Playlists.find({$and: [{name: 'queue'}, {userId: doc.userId}]}).count()
+      Playlists.insert
+        userId : doc.userId
+        username : doc.username
+        name : 'queue'
+        tracks : []
+        creation_date : new Date()
+      console.log doc.username + ' added queue'
+  )
