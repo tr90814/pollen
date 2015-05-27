@@ -85,13 +85,6 @@ Template.room.events =
         name: 'queue'
         tracks: []
 
-  "click .remove-track" : () ->
-    return unless this.playlistName
-    event.preventDefault()
-    Meteor.call 'removeTrackFromPlaylist',
-      playlistName : this.playlistName
-      _id : this._id
-
   "click .queue-track" : () ->
     return if this.playlistName == 'queue' && this.userId == Meteor.userId()
 

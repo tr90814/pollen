@@ -49,7 +49,7 @@ Template.layout.events =
 
   "click .playlist-selection input" : (event) ->
     container = $('.playlist-selection')
-    name      = $(event.toElement).data('name')
+    name      = $(event.target).data('name')
 
     container.addClass('hidden')
 
@@ -59,6 +59,13 @@ Template.layout.events =
 
   "click .playlist-selection .cancel" : () ->
     $('.playlist-selection').addClass('hidden')
+
+  "click .remove-track" : (event) ->
+    return unless this.playlistName
+    event.preventDefault()
+    Meteor.call 'removeTrackFromPlaylist',
+      playlistName : this.playlistName
+      _id : this._id
 
 # Sound manipulation
 
