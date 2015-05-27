@@ -3,7 +3,7 @@ unless process.env.NODE_ENV == "development"
 
 Meteor.methods
   createRoom : (callback) ->
-    # giveEveryoneADefault() # ** Migration **
+    # giveEveryoneADefault() # ** Migration example **
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
@@ -248,21 +248,6 @@ createPlaylistIfNeeded = (params) ->
     Meteor.call "createPlaylist",
       name: params.playlistName
 
-addRGB = () ->
-  Rooms.find({}).forEach((doc)->
-    if !doc.profile.colour
-      Rooms.update({userId: doc.userId},{
-        $set:{
-          'profile.colour': {
-            r: randomRGB(),
-            g: randomRGB(),
-            b: randomRGB()
-          }
-        }
-      })
-      console.log doc.username + ' colour added'
-  )
-
 colorCompare = (existingBand, genreBand) ->
   difference = existingBand - genreBand
   newValue   = existingBand
@@ -289,7 +274,7 @@ removeRoom = (roomId) ->
   Rooms.remove roomId
   Results.remove roomId:roomId
 
-# Migration example
+# ** Migration example **
 
 giveEveryoneADefault = () ->
   Rooms.find({}).forEach((doc)->
