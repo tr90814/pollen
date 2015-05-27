@@ -28,7 +28,7 @@ getPlaylists = (args, meteorId) ->
 roomLoop = (roomUserId) ->
   return false unless room = Rooms.findOne({userId: roomUserId})
   return room if room.seedId == roomUserId
-  roomLoop(seedId)
+  roomLoop(room.seedId)
 
 seedLoop = (userId, meteorId) ->
   room = Rooms.findOne({userId: userId})
