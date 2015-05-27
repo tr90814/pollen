@@ -127,11 +127,14 @@ nextTrack = () ->
 setNewTrack = (track, obj) ->
   Session.set "currentSound", obj
   Session.set "currentSoundId", track.trackId
+
   if obj.readyState == 2
     Meteor.call 'incrementPlaylist'
 
 stopTrack = () ->
   Meteor.call 'setCurrentTrack', undefined
+
+  console.log Session.get('currentSound')
 
   if Session.get('currentSound')
     soundManager.stop(Session.get('currentSound').sID)

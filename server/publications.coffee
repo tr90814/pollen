@@ -39,8 +39,4 @@ seedLoop = (userId, meteorId) ->
   else
     seedLoop(room.seedId, meteorId)
 
-# Fix genres
-# Fix double play
-# Fix listeners count
-
 # SIMON WORDS TO MUM

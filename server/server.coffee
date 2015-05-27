@@ -217,7 +217,6 @@ Meteor.methods
     Rooms.update({userId: Meteor.userId()}, {$set: {seedId: seedId}})
 
   setCurrentTrack : (track) ->
-    return unless track
     Rooms.update({userId: Meteor.userId()}, {$set: {currentTrack: track}})
 
 # Setup an onDisconnect handler on UserPresenceSettings (from dpid:user-presence package).
