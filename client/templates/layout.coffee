@@ -176,7 +176,7 @@ timer = (sound) ->
   newPosition = (sound.position/sound.durationEstimate) * 100
   progress = $('.progress')
   if Math.abs(newPosition - progress.val()) < 3
-    $('.progress').val(newPosition)
+    progress.val(newPosition)
 
 timeFormat = (milliSeconds) ->
   time    = Math.floor(milliSeconds / 1000)

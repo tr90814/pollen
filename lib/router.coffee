@@ -34,6 +34,9 @@ Router.map ->
       # See, server/publications.coffee for publication setup.
       waitOn : ->
         Meteor.subscribe "allRooms"
+        Meteor.subscribe "playlists",
+          roomUserId: Session.get('roomUserId')
+          seedId: Session.get("seedId")
 
       # When navigating to a room we want to call joinRoom so the server can handle it.
       # Then, we set the session roomId. This will reactivley update user presence data.
@@ -45,9 +48,6 @@ Router.map ->
           Session.set("nodeId", Session.get('roomUserId'))
         Meteor.call "createRoom", @.params._id, Meteor.user().username
         Meteor.subscribe "allGenres", Session.get('roomUserId')
-        Meteor.subscribe "playlists",
-          roomUserId: Session.get('roomUserId')
-          seedId: Session.get("seedId")
 
         @.render()
       # Remove user from the list of users on unload
@@ -59,5 +59,7 @@ Router.map ->
 Router.onBeforeAction ->
   if not Meteor.userId()
     @.render "home"
+    Meteor.subscribe "playlists",
+      seedId: undefined
   else
     @.next()
