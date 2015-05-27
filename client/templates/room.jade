@@ -58,13 +58,13 @@ template(name="room")
         ul
           each playlists
             li.playlist.item(data-name="#{this.name}")
-              if isDefault
+              if isQueue
                 label Queue
               else
                 label #{this.name}
               if playlistState
                 a.play-playlist Listen to this playlist
-              if isDefault
+              if isQueue
                 a.red.delete-playlist.pull-right Clear
               else
                 a.red.delete-playlist.pull-right Delete
@@ -74,7 +74,7 @@ template(name="room")
                     li(draggable="true", data-id="#{_id}").item.track
                       span.artwork
                         img(src="#{artwork_url}")
-                      unless isDefault
+                      unless isQueue
                         a.queue-track Add to queue
                       a.remove-track Remove
                       span.title #{title}

@@ -6,7 +6,7 @@ Template.layout.helpers
     Session.get('currentSound').paused
 
   playlists: ->
-    Playlists.find({$and: [{userId: Meteor.userId()},{name: {$ne: 'default'}}]})
+    Playlists.find({userId: Meteor.userId()})
 
   ownQueue : ->
     this.userId == Meteor.userId()
@@ -19,8 +19,8 @@ Template.layout.helpers
 
   queued: ->
     if Meteor.userId() != Session.get('seedId')
-      playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
-    else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'default'}]})
+      playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'queue'}]})
+    else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'queue'}]})
     if playlist then return playlist.tracks
 
   message : ->
@@ -64,8 +64,8 @@ Template.layout.events =
 
 playMessage = () ->
   if Meteor.userId() != Session.get('seedId')
-    playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
-  else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'default'}]})
+    playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'queue'}]})
+  else playlist = Playlists.findOne({$and: [{userId: Meteor.userId()}, {name: 'queue'}]})
 
   if playlist && playlist.tracks
     if track = playlist.tracks[0]
@@ -215,7 +215,7 @@ drop = (e) ->
   draggedTo         = getItem(e)
   draggedFromImg    = draggedFrom.children().clone()
   draggedToImg      = draggedTo.children()
-  playlistName      = ul.parents('.playlist').data('name') || 'default'
+  playlistName      = ul.parents('.playlist').data('name') || 'queue'
 
   if draggedFrom.attr('draggable') == true
     draggedFrom.html(draggedToImg)

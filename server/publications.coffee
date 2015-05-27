@@ -14,14 +14,14 @@ getPlaylists = (args, meteorId) ->
     room = roomLoop(args.roomUserId)
     Playlists.find({
       $or: [
-        {$and: [{userId: userId}, {name: 'default'}]},
-        {$and: [{userId: room.userId}, {name: 'default'}]},
+        {$and: [{userId: userId}, {name: 'queue'}]},
+        {$and: [{userId: room.userId}, {name: 'queue'}]},
         {userId: meteorId}
       ]})
   else
     Playlists.find({
       $or: [
-        {$and: [{userId: userId}, {name: 'default'}]},
+        {$and: [{userId: userId}, {name: 'queue'}]},
         {userId: meteorId}
       ]})
 

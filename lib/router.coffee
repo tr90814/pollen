@@ -7,7 +7,7 @@ Router.configure
       unless Session.get "seedId"
         Session.set "seedId", Meteor.userId()
       unless Session.get "currentPlaylist"
-        Session.set "currentPlaylist", 'default'
+        Session.set "currentPlaylist", 'queue'
 
 # Define page routes.
 Router.map ->

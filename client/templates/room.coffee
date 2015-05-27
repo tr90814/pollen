@@ -22,7 +22,7 @@ Template.room.helpers
     'rgb(' + Math.floor(colour.r) + ',' + Math.floor(colour.g) + ',' + Math.floor(colour.b) + ')'
 
   queued : ->
-    if playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'default'}]})
+    if playlist = Playlists.findOne({$and: [{userId: {$ne: Meteor.userId()}}, {name: 'queue'}]})
       return playlist.tracks
 
   profile : ->
@@ -39,8 +39,8 @@ Template.room.helpers
   tracks : ->
     this.tracks
 
-  isDefault : ->
-    this.name == "default" || this.playlistName == 'default'
+  isQueue : ->
+    this.name == "queue" || this.playlistName == 'queue'
 
   roomUsers : ->
     if roomId = Session.get 'roomId'
@@ -80,9 +80,9 @@ Template.room.events =
   "click .delete-playlist" : () ->
     Meteor.call 'removePlaylist',
       playlistName : this.name
-    if this.name == 'default'
+    if this.name == 'queue'
       Meteor.call 'createPlaylist',
-        name: 'default'
+        name: 'queue'
         tracks: []
 
   "click .remove-track" : () ->
@@ -93,11 +93,11 @@ Template.room.events =
       _id : this._id
 
   "click .queue-track" : () ->
-    return if this.playlistName == 'default' && this.userId == Meteor.userId()
+    return if this.playlistName == 'queue' && this.userId == Meteor.userId()
 
     Meteor.call "addTrack",
       track: this
-      playlistName: 'default'
+      playlistName: 'queue'
 
   "submit [data-action=update-genre]" : (event) ->
     event.preventDefault()

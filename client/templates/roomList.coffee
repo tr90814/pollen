@@ -28,12 +28,12 @@ Template.roomList.events
   "click .queue-track" : () ->
     Meteor.call "addTrack",
       track: this
-      playlistName: 'default'
+      playlistName: 'queue'
 
   "click .play-track" : () ->
     Meteor.call "playTrack",
       track: this
-      playlistName: 'default'
+      playlistName: 'queue'
 
   "click .listen" : () ->
     seedRoom = Rooms.findOne({userId: this.seedId})
