@@ -8,6 +8,7 @@ Meteor.methods
     # Rooms.remove({})
     # Genres.remove({})
     # setAllCurrentTracks()
+    setAllDefaultsToQueue()
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
@@ -267,15 +268,14 @@ addRGB = () ->
       console.log doc.username + ' colour added'
   )
 
-setAllCurrentTracks = () ->
-  Rooms.find({}).forEach((doc)->
-    if doc.currentTrack && doc.username != 'Trodge'
-      Rooms.update({userId: doc.userId},{
-        $set:{
-          currentTrack: undefined
-        }
-      })
-      console.log doc.username + ' currentTrack unset'
+setAllDefaultsToQueue = () ->
+  Playlists.find({name: 'default'}).forEach((doc)->
+    Playlists.update({$and: [{userId: doc.userId}, {name: 'default'}]},{
+      $set:{
+        name: 'queue'
+      }
+    })
+    console.log doc.username + ' changed queue name'
   )
 
 colorCompare = (existingBand, genreBand) ->
