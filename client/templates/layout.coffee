@@ -96,7 +96,7 @@ playMessage = () ->
     else
       stopTrack()
 
-  else if Session.get "currentSound"
+  else
     stopTrack()
 
 toggleMute = () ->
@@ -133,11 +133,9 @@ setNewTrack = (track, obj) ->
 stopTrack = () ->
   Meteor.call 'setCurrentTrack', undefined
 
-  seedId   = Session.get('seedId')
-  hasTrack = Playlists.find({$and: [{userId: seedId},{name: 'default'}]}).count()
-
-  if Session.get('currentSound') && hasTrack
+  if Session.get('currentSound')
     soundManager.stop(Session.get('currentSound').sID)
+
   Session.set "currentSound", undefined
   Session.set "currentSoundId", undefined
 

@@ -4,10 +4,10 @@ Meteor.publish "searchResults", (username) -> Results.find "data.username" : use
 Meteor.publish "roomUsers",     (username) -> UserPresences.data
 Meteor.publish "nodes",         (userId) ->   Rooms.find({seedId: userID})
 Meteor.publish "allGenres",     (userId) ->   if Rooms.findOne({userId: userId}).admin then Genres.find() else []
-Meteor.publish "playlists",     (args) ->     return getPlaylists(args, this.userId)
+Meteor.publish "playlists",     (args) ->     if this.userId then getPlaylists(args, this.userId) else []
 
 getPlaylists = (args, meteorId) ->
-  return [] unless args.seedId
+  return unless args.seedId
   userId = if args.seedId == meteorId then meteorId else seedLoop(args.seedId, meteorId)
 
   if args.roomUserId && args.roomUserId != meteorId
