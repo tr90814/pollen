@@ -3,7 +3,7 @@ unless process.env.NODE_ENV == "development"
 
 Meteor.methods
   createRoom : (callback) ->
-    # giveEveryoneADefault() ** Migration **
+    giveEveryoneADefault() # ** Migration **
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
