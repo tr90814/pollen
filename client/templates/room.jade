@@ -58,10 +58,7 @@ template(name="room")
         ul
           each playlists
             li.playlist.item(data-name="#{this.name}")
-              if isQueue
-                label Queue
-              else
-                label #{this.name}
+              label #{this.name}
               if playlistState
                 a.play-playlist Listen to this playlist
               if isQueue

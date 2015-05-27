@@ -11,6 +11,9 @@ Template.roomList.helpers
     if count < 0 then count = 0
     return count
 
+  notSelf : ->
+    this.userId != Meteor.userId()
+
   results: ->
     if Results.find({userId: Meteor.userId()}).count()
       Results.find {userId: Meteor.userId()}

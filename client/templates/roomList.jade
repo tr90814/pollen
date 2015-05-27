@@ -7,7 +7,8 @@ template(name="roomList")
     .list-group
       each rooms
         .list-group-item
-          a.listen Listen ►
+          if notSelf
+            a.listen Listen ►
           a(href="/room/#{_id}").room-link
             label #{username}
           if currentTrack
