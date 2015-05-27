@@ -3,7 +3,7 @@ unless process.env.NODE_ENV == "development"
 
 Meteor.methods
   createRoom : (callback) ->
-    giveEveryoneADefault() # ** Migration **
+    # giveEveryoneADefault() # ** Migration **
     unless Rooms.findOne({userId: Meteor.userId()})
 
       Rooms.insert
@@ -75,8 +75,8 @@ Meteor.methods
     unless Playlists.find({name: params.playlistName}).count()
       Meteor.call 'createPlaylist', name: params.playlistName
 
-    if count = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]})
-      count = count.tracks.length
+    if playlist = Playlists.findOne({$and: [{ name:params.playlistName }, {userId: Meteor.userId()}]})
+      count = playlist.tracks.length
     else
       count = 0
 

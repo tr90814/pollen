@@ -18,8 +18,9 @@ Router.map ->
     @.route "/rooms",
       template : "roomList"
       waitOn : ->
-        Meteor.subscribe "activeRooms"
         Meteor.subscribe "searchResults", Meteor.username
+        Meteor.subscribe "rooms",
+          roomUserId : undefined
         Meteor.subscribe "playlists",
           seedId: Session.get("seedId")
 
@@ -33,7 +34,8 @@ Router.map ->
       # Subscribe to the room user list and messages associated with this room id.
       # See, server/publications.coffee for publication setup.
       waitOn : ->
-        Meteor.subscribe "allRooms"
+        Meteor.subscribe "rooms",
+          roomUserId: Session.get('roomUserId')
         Meteor.subscribe "playlists",
           roomUserId: Session.get('roomUserId')
           seedId: Session.get("seedId")

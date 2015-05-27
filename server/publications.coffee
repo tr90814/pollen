@@ -1,9 +1,7 @@
-Meteor.publish "allRooms",      () ->         Rooms.find()
-Meteor.publish "activeRooms",   () ->         Rooms.find({$or: [{currentTrack: {$ne: undefined}}, {userId: this.userId}]})
-Meteor.publish "searchResults", (username) -> Results.find "data.username" : username
 Meteor.publish "roomUsers",     (username) -> UserPresences.data
-Meteor.publish "nodes",         (userId) ->   Rooms.find({seedId: userID})
+Meteor.publish "searchResults", (username) -> Results.find "data.username" : username
 Meteor.publish "allGenres",     (userId) ->   if Rooms.findOne({userId: userId}).admin then Genres.find() else []
+Meteor.publish "rooms",         (args) ->     if args.roomUserId then Rooms.find({}) else Rooms.find({$or: [{currentTrack: {$ne: undefined}}, {userId: this.userId}]})
 Meteor.publish "playlists",     (args) ->     if this.userId then getPlaylists(args, this.userId) else []
 
 getPlaylists = (args, meteorId) ->
