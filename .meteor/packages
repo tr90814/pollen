@@ -1,4 +1,3 @@
-meteor-platform
 iron:router
 accounts-ui
 accounts-password
@@ -8,3 +7,17 @@ stylus
 dpid:user-presence
 mizzao:bootstrap-3
 meteorhacks:kadira
+standard-minifiers
+meteor-base
+mobile-experience
+mongo
+blaze-html-templates
+session
+jquery
+tracker
+logging
+reload
+random
+ejson
+spacebars
+check
