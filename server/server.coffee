@@ -1,3 +1,5 @@
+_.extend(Meteor.settings, process.env)
+
 unless process.env.NODE_ENV == "development"
   Kadira.connect(Meteor.settings.KADIRA_ID, Meteor.settings.KADIRA_SECRET)
 
