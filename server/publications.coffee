@@ -36,5 +36,3 @@ seedLoop = (userId, meteorId) ->
     return false
   else
     seedLoop(room.seedId, meteorId)
-
-# SIMON WORDS TO MUM

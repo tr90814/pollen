@@ -1,5 +1,5 @@
 unless process.env.NODE_ENV == "development"
-  Kadira.connect('D5K3HuHRTZMvaqyYY', 'cd689710-5925-41ad-a8d2-a57101dc39a3')
+  Kadira.connect(Meteor.settings.KADIRA_ID, Meteor.settings.KADIRA_SECRET)
 
 Meteor.methods
   createRoom : (callback) ->
@@ -169,7 +169,7 @@ Meteor.methods
   createPlaylist : (params={}) ->
     params['name'] = params.name || 'queue'
     return unless params.name
-    return if params.name == 'queue' && Playlists.find({$and: [{userId: Meteor.UserId()}, {name: 'queue'}]}).count()
+    return if params.name == 'queue' && Playlists.find({$and: [{userId: Meteor.userId()}, {name: 'queue'}]}).count()
 
     Playlists.insert
       userId : Meteor.userId()
