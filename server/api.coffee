@@ -2,7 +2,8 @@ bodyParser = Meteor.npmRequire('body-parser')
 Picker.middleware(bodyParser.urlencoded({ extended: false }))
 Picker.middleware(bodyParser.json())
 
-Picker.route '/hubot/', (params, req, res, next) ->
+Picker.route '/hubot', (params, req, res, next) ->
+  console.log req.body
   res.setHeader 'access-control-allow-methods', 'POST'
 
   Meteor.call 'search', req.body.text, (err, res) ->
