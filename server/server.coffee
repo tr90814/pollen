@@ -213,9 +213,10 @@ Meteor.methods
       tracks : params.tracks || []
       creation_date : new Date()
 
-  incrementPlaylist : () ->
-    if Playlists.find({$and: [{userId: Meteor.userId()}, {name: 'queue'}]}).count()
-      Playlists.update({$and: [{userId: Meteor.userId()},{name: 'queue'}]}, {$pop: {tracks: -1}})
+  incrementPlaylist : (userId) ->
+    if !userId then userId = Meteor.userId()
+    if Playlists.find({$and: [{userId: userId}, {name: 'queue'}]}).count()
+      Playlists.update({$and: [{userId: userId},{name: 'queue'}]}, {$pop: {tracks: -1}})
 
   removePlaylist : (params={}) ->
     return unless params.playlistName
