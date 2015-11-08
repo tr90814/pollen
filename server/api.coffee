@@ -12,8 +12,8 @@ Picker.route '/hubot', (params, req, res, next) ->
     Meteor.call 'incrementPlaylist', userId
     res.end("Skipped to next track.")
   else
-    Meteor.call 'search', req.body.text, (err, res) ->
-      obj = {playlistName: 'queue', track: res}
+    Meteor.call 'search', req.body.text, (err, track) ->
+      obj = {playlistName: 'queue', track: track}
       obj.track['username'] = 'farewill'
       obj.track['userId'] = userId
       obj.track['trackId'] = obj.track.id
