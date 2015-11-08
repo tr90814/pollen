@@ -8,7 +8,7 @@ Picker.route '/hubot', (params, req, res, next) ->
 
   userId = Meteor.users.findOne({username: 'farewill'})._id
 
-  if req.body.test == 'skip'
+  if req.body.text == 'skip'
     Meteor.call 'incrementPlaylist', userId
     res.end("Skipped to next track.")
   else
