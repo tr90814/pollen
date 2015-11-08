@@ -18,7 +18,7 @@ Picker.route '/hubot', (params, req, res, next) ->
       obj.track['userId'] = userId
       obj.track['trackId'] = obj.track.id
       Meteor.call 'addTrackToFarewill', obj
-    res.end("Added track to Farewill queue!")
+      res.end("Added track #{obj.track.user} - #{obj.track.title} to Farewill queue!")
 
 Meteor.methods
   search: (query) ->
