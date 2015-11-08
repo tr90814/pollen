@@ -4,7 +4,8 @@ Picker.middleware(bodyParser.json())
 
 Picker.route '/hubot/', (params, req, res, next) ->
   res.setHeader 'access-control-allow-methods', 'POST'
-  Meteor.call 'search', req.body.query, (err, res) ->
+
+  Meteor.call 'search', req.body.text, (err, res) ->
     obj = {playlistName: 'queue', track: res}
     obj.track['username'] = 'farewill'
     obj.track['userId'] = Meteor.users.findOne({username: 'farewill'})._id
