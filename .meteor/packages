@@ -21,3 +21,9 @@ random
 ejson
 spacebars
 check
+meteorhacks:picker
+http
+meteorhacks:npm
+
+
+npm-container

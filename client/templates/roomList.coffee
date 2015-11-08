@@ -33,6 +33,11 @@ Template.roomList.events
       track: this
       playlistName: 'queue'
 
+  "click .farewill-queue-track" : () ->
+    Meteor.call "addTrackToFarewill",
+      track: this
+      playlistName: 'queue'
+
   "click .play-track" : () ->
     Meteor.call "playTrack",
       track: this

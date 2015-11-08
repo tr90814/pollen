@@ -103,6 +103,39 @@ Meteor.methods
       }
     })
 
+  addTrackToFarewill : (params={}) ->
+    return unless params && params.track && params.playlistName
+    return unless params.track.trackId && params.track.user
+    unless Playlists.find({name: params.playlistName}).count()
+      Meteor.call 'createPlaylist', name: params.playlistName
+
+    if playlist = Playlists.findOne({$and: [{ name:params.playlistName }, {username: 'farewill'}]})
+      count = playlist.tracks.length
+    else
+      count = 0
+    farewill = Meteor.users.findOne({'username': 'farewill'})
+
+    Playlists.update({$and: [{ name:params.playlistName }, {username: 'farewill'}]}, {
+      $addToSet: {
+        tracks: {
+          _id: new Meteor.Collection.ObjectID()._str
+          index : count
+          username : 'farewill'
+          userId : farewill._id
+          playlistName : params.playlistName
+          trackId : params.track.trackId
+          artwork_url : params.track.artwork_url
+          genre : params.track.genre
+          description : params.track.description
+          genre : params.track.genre
+          title : params.track.title
+          user : params.track.user
+          duration : params.track.duration
+          creation_date : new Date()
+        }
+      }
+    })
+
   playTrack : (params={}) ->
     return unless params && params.track && params.playlistName
     return unless params.track.trackId && params.track.user
