@@ -23,5 +23,5 @@ Picker.route '/hubot', (params, req, res, next) ->
 Meteor.methods
   search: (query) ->
     res = HTTP.get("http://api.soundcloud.com/tracks/?q=#{query}&client_id=4e881f300e2625f432fa0556d5404e68", {})
-    firstResult = res.data[0]
+    firstResult = _.find(res.data, (track) -> track.streamable && track.sharing == "public")
     return firstResult
