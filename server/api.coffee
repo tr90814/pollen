@@ -22,7 +22,7 @@ Picker.route '/hubot', (params, req, res, next) ->
       tracks.map (track, index) ->
         send += "\n index: #{index} | #{track.user.username} - #{track.title}"
       res.end(send)
-  else if req.body.text.indexof('$add') != -1
+  else if req.body.text.indexOf('$add') != -1
     track = searchCache[req.body.text.replace('$add', '').trim()]
     obj = {playlistName: 'queue', track: track}
     obj.track['username'] = 'farewill'
