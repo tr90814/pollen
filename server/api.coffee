@@ -11,6 +11,9 @@ Picker.route '/hubot', (params, req, res, next) ->
   if req.body.text == 'skip'
     Meteor.call 'incrementPlaylist', userId
     res.end("Skipped to next track.")
+  if req.body.text == 'undo'
+    Meteor.call 'removeLastOfPlaylist', userId
+    res.end("Removed last track in queue.")
   else
     Meteor.call 'search', req.body.text, (err, track) ->
       obj = {playlistName: 'queue', track: track}

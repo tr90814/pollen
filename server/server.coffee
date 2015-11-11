@@ -218,6 +218,11 @@ Meteor.methods
     if Playlists.find({$and: [{userId: userId}, {name: 'queue'}]}).count()
       Playlists.update({$and: [{userId: userId},{name: 'queue'}]}, {$pop: {tracks: -1}})
 
+  removeLastOfPlaylist: (userId) ->
+    if !userId then userId = Meteor.userId()
+    if Playlists.find({$and: [{userId: userId}, {name: 'queue'}]}).count()
+      Playlists.update({$and: [{userId: userId},{name: 'queue'}]}, {$pop: {tracks: 1}})
+
   removePlaylist : (params={}) ->
     return unless params.playlistName
     Playlists.remove({$and: [{name: params.playlistName}, {userId: Meteor.userId()}]})
