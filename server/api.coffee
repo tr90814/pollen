@@ -15,7 +15,7 @@ Picker.route '/hubot', (params, req, res, next) ->
   else if req.body.text == '$undo'
     Meteor.call 'removeLastOfPlaylist', userId
     res.end("Removed last track in queue.")
-  else if req.body.text.indexof('$search') != -1
+  else if req.body.text.indexOf('$search') != -1
     Meteor.call 'search', req.body.text.replace('$search', ''), (err, tracks) ->
       searchCache = tracks
       send = "Do /eargasm $add [index] with the track you want to add."
