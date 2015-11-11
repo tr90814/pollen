@@ -14,6 +14,24 @@ Picker.route '/hubot', (params, req, res, next) ->
   if req.body.text == 'undo'
     Meteor.call 'removeLastOfPlaylist', userId
     res.end("Removed last track in queue.")
+<<<<<<< Updated upstream
+=======
+  else if req.body.text.indexof('$search') != -1
+    Meteor.call 'search', req.body.text.replace('$search', ''), (err, tracks) ->
+      searchCache = tracks
+      send = "Do /eargasm $add [index] with the track you want to add."
+      tracks.map (track, index) ->
+        send += "\n index: #{index} | #{track.user.username} - #{track.title}"
+      res.end(send)
+  else if req.body.text.indexof('$add') != -1
+    track = searchCache[req.body.text.replace('$add', '').trim()]
+    obj = {playlistName: 'queue', track: track}
+    obj.track['username'] = 'farewill'
+    obj.track['userId'] = userId
+    obj.track['trackId'] = obj.track.id
+    Meteor.call 'addTrackToFarewill', obj
+    res.end("Added track '#{obj.track.user.username} - #{obj.track.title}' to Farewill queue!")
+>>>>>>> Stashed changes
   else
     Meteor.call 'search', req.body.text, (err, track) ->
       obj = {playlistName: 'queue', track: track}
