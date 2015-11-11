@@ -1,6 +1,7 @@
 bodyParser = Meteor.npmRequire('body-parser')
 Picker.middleware(bodyParser.urlencoded({ extended: false }))
 Picker.middleware(bodyParser.json())
+searchCache = undefined
 
 Picker.route '/hubot', (params, req, res, next) ->
   console.log req.body
@@ -8,14 +9,12 @@ Picker.route '/hubot', (params, req, res, next) ->
 
   userId = Meteor.users.findOne({username: 'farewill'})._id
 
-  if req.body.text == 'skip'
+  if req.body.text == '$skip'
     Meteor.call 'incrementPlaylist', userId
     res.end("Skipped to next track.")
-  if req.body.text == 'undo'
+  else if req.body.text == '$undo'
     Meteor.call 'removeLastOfPlaylist', userId
     res.end("Removed last track in queue.")
-<<<<<<< Updated upstream
-=======
   else if req.body.text.indexof('$search') != -1
     Meteor.call 'search', req.body.text.replace('$search', ''), (err, tracks) ->
       searchCache = tracks
@@ -31,9 +30,9 @@ Picker.route '/hubot', (params, req, res, next) ->
     obj.track['trackId'] = obj.track.id
     Meteor.call 'addTrackToFarewill', obj
     res.end("Added track '#{obj.track.user.username} - #{obj.track.title}' to Farewill queue!")
->>>>>>> Stashed changes
   else
-    Meteor.call 'search', req.body.text, (err, track) ->
+    Meteor.call 'search', req.body.text, (err, tracks) ->
+      track = tracks[0]
       obj = {playlistName: 'queue', track: track}
       obj.track['username'] = 'farewill'
       obj.track['userId'] = userId
@@ -44,5 +43,5 @@ Picker.route '/hubot', (params, req, res, next) ->
 Meteor.methods
   search: (query) ->
     res = HTTP.get("http://api.soundcloud.com/tracks/?q=#{query}&client_id=4e881f300e2625f432fa0556d5404e68", {})
-    firstResult = _.find(res.data, (track) -> track.streamable && track.sharing == "public")
-    return firstResult
+    results = _.filter(res.data, (track) -> track.streamable && track.sharing == "public")
+    return results
