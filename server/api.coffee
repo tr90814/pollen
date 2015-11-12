@@ -19,7 +19,8 @@ Picker.route '/hubot', (params, req, res, next) ->
       "\n/eargasm [search query] - adds the first result from the query entered." +
       "\n/eargasm $skip - skip the current song." +
       "\n/eargasm $undo - remove the last song in the queue." +
-      "\n/eargasm $help - this help string.")
+      "\n/eargasm $help - this help string." +
+      "\n the playlist is at pollen-seed.herokuapp.com under the 'farewill' username.")
   else if req.body.text.indexOf('$undo') != -1
     Meteor.call 'removeLastOfPlaylist', userId
     res.end("Removed last track in queue.")
