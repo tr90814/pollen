@@ -13,7 +13,7 @@ Picker.route '/hubot', (params, req, res, next) ->
     Meteor.call 'incrementPlaylist', userId
     res.end("Skipped to next track.")
   if req.body.text.indexOf('$help') != -1
-    res.end("Useage:" +
+    res.end("Usage:" +
       "\n/eargasm $search [search term] - returns a list of search results with an index." +
       "\n/eargasm $add [index] - then adds the track at that index in the results." +
       "\n/eargasm [search query] - adds the first result from the query entered." +
