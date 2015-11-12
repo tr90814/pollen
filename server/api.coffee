@@ -9,10 +9,18 @@ Picker.route '/hubot', (params, req, res, next) ->
 
   userId = Meteor.users.findOne({username: 'farewill'})._id
 
-  if req.body.text == '$skip'
+  if req.body.text.indexOf('$skip') != -1
     Meteor.call 'incrementPlaylist', userId
     res.end("Skipped to next track.")
-  else if req.body.text == '$undo'
+  if req.body.text.indexOf('$help') != -1
+    res.end("Useage:" +
+      "\n/eargasm $search [search term] - returns a list of search results with an index." +
+      "\n/eargasm $add [index] - then adds the track at that index in the results." +
+      "\n/eargasm [search query] - adds the first result from the query entered." +
+      "\n/eargasm $skip - skip the current song." +
+      "\n/eargasm $undo - remove the last song in the queue." +
+      "\n/eargasm $help - this help string.")
+  else if req.body.text.indexOf('$undo') != -1
     Meteor.call 'removeLastOfPlaylist', userId
     res.end("Removed last track in queue.")
   else if req.body.text.indexOf('$search') != -1
